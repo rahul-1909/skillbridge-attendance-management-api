@@ -44,25 +44,27 @@ Once it's running, you can hit `http://127.0.0.1:8000/application` for the app.
 - **Monitoring Officer:** `monitor@skillbridgeapp.com`
 
 ## Maintain this userflow for best experience
-## 1. Login as a trainer
+## Login as a trainer
 --> Create a Batch by entering a name under create batch tab
 --> You will get a batch id after creating the batch, this will be used in the next tab
 --> Enter the batch id to generate a token to share with students (copy this token and keep it handy to test student flow)
 --> Schedule a session by entering all necessary details
 --> Enter session id in the session attendance tab to load attendace of all students
 
-## 2. Login as a Student
+## Login as a Student
 --> Under join batch tab enter the batch token copied from trainer login
 --> Under mark attendance enter session id which is currently active and mark our attendance (can be tested again with trainer login for that specific session)
 
-## 3. Login as a Institution
+## Login as a Institution
 --> Can create batches like a trainer and also view batch reports by entering batch id
 
-## 4. Login as a Program Manager
+## Login as a Program Manager
 --> Analytics on institution specific, global analytics views
 
-## 5. Login as a Monitoring Officer
+## Login as a Monitoring Officer
 --> Authorize a special token from .env file and view Live data feed
+
+
 
 ## 4. Sample CURL Commands
 
