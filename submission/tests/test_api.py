@@ -1,4 +1,6 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
+
+import src.main as main_module
 
 
 def create_institution_and_users(client):
@@ -143,6 +145,65 @@ def test_student_can_mark_own_attendance(client):
         },
         headers={"Authorization": f"Bearer {trainer_token}"},
     )
+
+    mark_resp = client.post(
+        "/attendance/mark",
+        json={"session_id": 1, "status": "present"},
+        headers={"Authorization": f"Bearer {student_token}"},
+    )
+    assert mark_resp.status_code == 200
+
+
+def test_student_can_mark_attendance_in_ist_window(client, monkeypatch):
+    trainer_token, student_token = create_institution_and_users(client)
+
+    client.post(
+        "/batches",
+        json={"name": "Batch IST"},
+        headers={"Authorization": f"Bearer {trainer_token}"},
+    )
+
+    invite_resp = client.post(
+        "/batches/1/invite",
+        json={"expires_in_hours": 2},
+        headers={"Authorization": f"Bearer {trainer_token}"},
+    )
+    invite_token = invite_resp.json()["message"].split(": ", 1)[1]
+
+    join_resp = client.post(
+        "/batches/join",
+        json={"token": invite_token},
+        headers={"Authorization": f"Bearer {student_token}"},
+    )
+    assert join_resp.status_code == 200
+
+    client.post(
+        "/sessions",
+        json={
+            "batch_id": 1,
+            "title": "IST Session",
+            "date": "2026-04-22",
+            "start_time": "10:00:00",
+            "end_time": "11:00:00",
+        },
+        headers={"Authorization": f"Bearer {trainer_token}"},
+    )
+
+    ist = timezone(timedelta(hours=5, minutes=30))
+    ist_now = datetime(2026, 4, 22, 10, 30, 0, tzinfo=ist)
+
+    class FakeDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            if tz is not None:
+                return ist_now.astimezone(tz)
+            return ist_now.replace(tzinfo=None)
+
+        @classmethod
+        def utcnow(cls):
+            return ist_now.astimezone(timezone.utc).replace(tzinfo=None)
+
+    monkeypatch.setattr(main_module, "datetime", FakeDateTime)
 
     mark_resp = client.post(
         "/attendance/mark",

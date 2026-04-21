@@ -1,6 +1,6 @@
 import os
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -46,6 +46,7 @@ load_dotenv()
 
 MONITORING_API_KEY = os.getenv("MONITORING_API_KEY", "monitoring-dev-key")
 BASE_DIR = Path(__file__).resolve().parent
+IST = timezone(timedelta(hours=5, minutes=30))
 
 app = FastAPI(title="SkillBridge Attendance API", version="1.0.0")
 
@@ -301,7 +302,7 @@ def mark_attendance(
             detail="Student is not enrolled in this session's batch",
         )
 
-    now = datetime.now()
+    now = datetime.now(IST)
     current_date = now.date()
     current_time = now.time().replace(tzinfo=None)
     is_active = (
