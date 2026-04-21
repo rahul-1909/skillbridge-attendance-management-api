@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge App</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --sidebar: #1e293b;
+      --sidebar-hover: #334155;
+      --text: #334155;
+      --text-light: #94a3b8;
+      --white: #ffffff;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+    
+    /* Utility Classes */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .btn-submit { background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; width: auto;}
+    .btn-submit:hover { background: var(--primary-hover); }
+    
+    /* Login Screen */
+    #login-screen { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #f1f5f9, #cbd5e1); position: fixed; top: 0; left: 0; z-index: 1000; }
+    .login-box { background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; }
+    .login-box h1 { margin-bottom: 5px; color: var(--primary); font-size: 26px; }
+    .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 16px; outline: none; }
+    .login-box input:focus { border-color: var(--primary); }
+    .login-box button { width: 100%; padding: 12px; background: var(--primary); color: var(--white); border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .login-box button:hover { background: var(--primary-hover); }
+    .error-msg { color: var(--danger); font-size: 14px; margin-bottom: 10px; display: none; background: #fee2e2; padding: 8px; border-radius: 4px; }
+    
+    /* Main App Layout */
+    #app-layout { width: 100%; height: 100%; }
+    
+    /* Sidebar */
+    .sidebar { width: 260px; background: var(--sidebar); color: var(--white); display: flex; flex-direction: column; }
+    .sidebar-header { padding: 20px; font-size: 22px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links { flex: 1; padding: 20px 0; overflow-y: auto; }
+    .nav-item { padding: 12px 20px; cursor: pointer; display: block; color: #cbd5e1; font-weight: 500; font-size: 15px;}
+    .nav-item:hover, .nav-item.active { background: var(--sidebar-hover); color: var(--white); border-left: 4px solid var(--primary); }
+    .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .logout-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600; }
+    .logout-btn:hover { background: var(--danger); }
+    
+    /* Main Content */
+    .main-content { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
+    .top-header { height: 65px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 30px; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .header-title { font-size: 18px; font-weight: 600; }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 700; text-transform: capitalize; background: #e0e7ff; color: #1e40af;}
+    
+    .content-area { padding: 30px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; align-items: center; }
+    
+    /* View Sections */
+    .view-card { display: none; background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); width: 100%; max-width: 800px; margin-bottom: 30px; border: 1px solid var(--border); }
+    .view-card.active { display: block; }
+    .view-card h2 { margin-bottom: 20px; font-size: 22px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    
+    /* Forms */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;}
+    .form-group { margin-bottom: 15px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #475569; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; outline: none; background: #f8fafc; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary); background: white; }
+    
+    /* Response Alert */
+    .alert { padding: 12px 16px; border-radius: 6px; margin-top: 20px; display: none; font-size: 14px; border-left: 4px solid transparent; }
+    .alert.success { display: block; background: #ecfdf5; color: #065f46; border-left-color: #10b981; }
+    .alert.error { display: block; background: #fef2f2; color: #991b1b; border-left-color: #ef4444; }
+    
+    /* Data Display */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+    th { background-color: #f1f5f9; font-weight: 600; color: #334155; }
+    tr:last-child td { border-bottom: none; }
+    .status-present { color: #059669; font-weight: 600; }
+    .status-absent { color: #dc2626; font-weight: 600; }
+    .status-late { color: #d97706; font-weight: 600; }
+
+    .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .stat-box { background: #f8fafc; border: 1px solid var(--border); padding: 15px; border-radius: 8px; text-align: center; }
+    .stat-box .title { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;}
+    .stat-box .value { font-size: 28px; font-weight: 700; color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h1>SkillBridge</h1>
+      <p id="auth-subtitle" style="margin-bottom: 25px; color: #64748b;">Sign in to application portal</p>
+      
+      <div id="login-error" class="error-msg"></div>
+      
+      <!-- Shared Fields -->
+      <input type="email" id="auth-email" placeholder="Email Address" />
+      <input type="password" id="auth-password" placeholder="Password" />
+      
+      <!-- Signup Exclusive Fields -->
+      <div id="signup-fields" class="hidden">
+        <input type="text" id="auth-name" placeholder="Full Name" />
+        <select id="auth-role" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 16px; outline: none;" onchange="toggleInstitutionField()">
+          <option value="student">Student</option>
+          <option value="trainer">Trainer</option>
+          <option value="institution">Institution</option>
+          <option value="programme_manager">Programme Manager</option>
+          <option value="monitoring_officer">Monitoring Officer</option>
+        </select>
+        <div id="auth-institution-wrap" class="hidden">
+          <input type="number" id="auth-institution-id" placeholder="Institution ID" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 16px; outline: none;" />
+        </div>
+      </div>
+      
+      <button id="auth-main-btn" onclick="handleAuth()">Sign In</button>
+      
+      <p style="margin-top: 15px; font-size: 14px; color: #64748b;">
+        <span id="auth-toggle-text">Don't have an account?</span>
+        <a href="#" id="auth-toggle-link" style="color: var(--primary); text-decoration: none; font-weight: 600;" onclick="toggleAuthMode()">Sign Up</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app-layout" class="flex hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">SkillBridge</div>
+      <div class="nav-links" id="sidebar-nav">
+        <!-- Rendered Dynamically -->
+      </div>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-title" id="page-title">Dashboard</div>
+        <div class="flex" style="align-items: center; gap: 15px;">
+          <span id="user-role-badge" class="badge">Role</span>
+        </div>
+      </header>
+
+      <div class="content-area">
+
+        <!-- ======================= TRAINER VIEWS ======================= -->
+        <!-- Create Batch -->
+        <div id="view-trainer-batch" class="view-card">
+          <h2>Create New Batch</h2>
+          <div class="form-group full">
+            <label>Batch Name</label>
+            <input type="text" id="tr-batch-name" placeholder="e.g., Python Bootcamp Q3" />
+          </div>
+          <button class="btn-submit" onclick="submitForm('/batches', 'POST', {name: document.getElementById('tr-batch-name').value}, 'tr-batch-alert')">Create Batch</button>
+          <div id="tr-batch-alert" class="alert"></div>
+        </div>
+
+        <!-- Invite -->
+        <div id="view-trainer-invite" class="view-card">
+          <h2>Generate Batch Invite</h2>
+          <div class="form-group full">
+            <label>Batch ID</label>
+            <input type="number" id="tr-invite-batch-id" placeholder="Enter Batch ID Number" />
+          </div>
+          <button class="btn-submit" onclick="submitForm(`/batches/${document.getElementById('tr-invite-batch-id').value}/invite`, 'POST', {expires_in_hours: 24}, 'tr-invite-alert')">Generate Invite Token</button>
+          <div id="tr-invite-alert" class="alert"></div>
+        </div>
+
+        <!-- Schedule Session -->
+        <div id="view-trainer-session" class="view-card">
+          <h2>Schedule Session</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Batch ID</label>
+              <input type="number" id="tr-sess-batch-id" />
+            </div>
+            <div class="form-group">
+              <label>Session Title</label>
+              <input type="text" id="tr-sess-title" placeholder="e.g., Intro to APIs" />
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="tr-sess-date" />
+            </div>
+            <div class="form-group">
+              <label>Start Time</label>
+              <input type="time" id="tr-sess-start" step="1" />
+            </div>
+            <div class="form-group">
+              <label>End Time</label>
+              <input type="time" id="tr-sess-end" step="1" />
+            </div>
+          </div>
+          <button class="btn-submit" onclick="scheduleSession()">Create Session</button>
+          <div id="tr-sess-alert" class="alert"></div>
+        </div>
+
+        <!-- View Attendance -->
+        <div id="view-trainer-attendance" class="view-card">
+          <h2>View Session Attendance</h2>
+          <div class="flex" style="gap: 15px; margin-bottom: 20px; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+              <label>Session ID</label>
+              <input type="number" id="tr-att-sess-id" placeholder="Enter Session ID" />
+            </div>
+            <button class="btn-submit" onclick="fetchSessionAttendance()">Load Attendance</button>
+          </div>
+          <div id="tr-att-alert" class="alert"></div>
+          <div id="tr-att-results" class="hidden">
+            <table>
+              <thead><tr><th>Student</th><th>Email</th><th>Status</th><th>Marked At</th></tr></thead>
+              <tbody id="tr-att-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ======================= STUDENT VIEWS ======================= -->
+        <!-- Join Batch -->
+        <div id="view-student-join" class="view-card">
+          <h2>Join a Batch</h2>
+          <p style="margin-bottom: 15px; color: #475569; font-size: 14px;">Enter the secure invite token provided by your trainer.</p>
+          <div class="form-group full">
+            <label>Invite Token</label>
+            <input type="text" id="st-join-token" placeholder="Token from trainer..." />
+          </div>
+          <button class="btn-submit" onclick="submitForm('/batches/join', 'POST', {token: document.getElementById('st-join-token').value}, 'st-join-alert')">Join Batch</button>
+          <div id="st-join-alert" class="alert"></div>
+        </div>
+
+        <!-- Mark Attendance -->
+        <div id="view-student-attendance" class="view-card">
+          <h2>Mark My Attendance</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Session ID</label>
+              <input type="number" id="st-att-sess-id" placeholder="Enter active session ID" />
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select id="st-att-status">
+                <option value="present">Present</option>
+                <option value="late">Late</option>
+                <option value="absent">Absent</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-submit" onclick="markAttendance()">Submit Attendance</button>
+          <div id="st-att-alert" class="alert"></div>
+        </div>
+
+        <!-- ======================= INSTITUTION VIEWS ======================= -->
+        <!-- Institution Batch -->
+        <div id="view-inst-batch" class="view-card">
+          <h2>Create Institutional Batch</h2>
+          <div class="form-group full">
+            <label>Batch Name</label>
+            <input type="text" id="inst-batch-name" placeholder="Batch Name" />
+          </div>
+          <button class="btn-submit" onclick="submitForm('/batches', 'POST', {name: document.getElementById('inst-batch-name').value}, 'inst-batch-alert')">Create Batch</button>
+          <div id="inst-batch-alert" class="alert"></div>
+        </div>
+        
+        <!-- Batch Summary -->
+        <div id="view-inst-summary" class="view-card">
+          <h2>Batch Summary</h2>
+          <div class="flex" style="gap: 15px; margin-bottom: 20px; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+              <label>Batch ID</label>
+              <input type="number" id="inst-sum-id" placeholder="Batch ID" />
+            </div>
+            <button class="btn-submit" onclick="fetchBatchSummary()">View Report</button>
+          </div>
+          <div id="inst-sum-alert" class="alert"></div>
+          <div id="inst-sum-results" class="hidden">
+            <h3 id="inst-sum-name" style="margin-bottom: 15px; color: var(--primary);"></h3>
+            <div class="stats-container">
+              <div class="stat-box"><div class="title">Total Sessions</div><div class="value" id="inst-s-total">0</div></div>
+              <div class="stat-box"><div class="title">Present</div><div class="value" id="inst-s-p" style="color:#10b981;">0</div></div>
+              <div class="stat-box"><div class="title">Late</div><div class="value" id="inst-s-l" style="color:#d97706;">0</div></div>
+              <div class="stat-box"><div class="title">Absent</div><div class="value" id="inst-s-a" style="color:#ef4444;">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================= PM VIEWS ======================= -->
+        <div id="view-pm-prog" class="view-card">
+          <h2>Programme-Wide Summary</h2>
+          <button class="btn-submit" onclick="fetchProgrammeSummary()" style="margin-bottom: 20px;">Refresh Global Analytics</button>
+          <div id="pm-prog-alert" class="alert"></div>
+          <div id="pm-prog-results" class="hidden stats-container">
+            <div class="stat-box"><div class="title">Institutions</div><div class="value" id="pm-p-inst">0</div></div>
+            <div class="stat-box"><div class="title">Batches</div><div class="value" id="pm-p-bat">0</div></div>
+            <div class="stat-box"><div class="title">Students</div><div class="value" id="pm-p-stu">0</div></div>
+            <div class="stat-box"><div class="title">Sessions</div><div class="value" id="pm-p-ses">0</div></div>
+            <div class="stat-box"><div class="title">Present</div><div class="value" id="pm-p-pre" style="color:#10b981;">0</div></div>
+          </div>
+        </div>
+
+        <div id="view-pm-inst" class="view-card">
+          <h2>Institution Summary</h2>
+          <div class="flex" style="gap: 15px; margin-bottom: 20px; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+              <label>Institution ID</label>
+              <input type="number" id="pm-inst-id" placeholder="ID" />
+            </div>
+            <button class="btn-submit" onclick="fetchInstSummary()">Load Report</button>
+          </div>
+          <div id="pm-inst-alert" class="alert"></div>
+          <div id="pm-inst-results" class="hidden">
+            <h3 id="pm-inst-name" style="margin-bottom: 15px; color: var(--primary);"></h3>
+            <div class="stats-container">
+              <div class="stat-box"><div class="title">Batches</div><div class="value" id="pm-i-bat">0</div></div>
+              <div class="stat-box"><div class="title">Students</div><div class="value" id="pm-i-stu">0</div></div>
+              <div class="stat-box"><div class="title">Sessions</div><div class="value" id="pm-i-ses">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================= MONITORING VIEWS ======================= -->
+        <div id="view-mon-auth" class="view-card">
+          <h2>Authorize Monitoring Access</h2>
+          <div class="form-group full">
+            <label>Secure API Key</label>
+            <input type="password" id="mon-key" placeholder="Enter strictly issued API key" />
+          </div>
+          <button class="btn-submit" onclick="getMonitoringToken()">Authorize Session</button>
+          <div id="mon-auth-alert" class="alert"></div>
+        </div>
+
+        <div id="view-mon-data" class="view-card" style="max-width: 900px;">
+          <h2>Global Attendance Feed</h2>
+          <p style="margin-bottom:15px; color:#475569; font-size:13px;">Requires active monitoring token.</p>
+          <button class="btn-submit" onclick="fetchGlobalAttendance()" style="margin-bottom: 15px;">Refresh Feed</button>
+          <div id="mon-data-alert" class="alert"></div>
+          <div id="mon-data-results" class="hidden">
+            <table>
+              <thead><tr><th>Mark ID</th><th>Session</th><th>Student</th><th>Status</th><th>Timestamp</th></tr></thead>
+              <tbody id="mon-data-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE = "";
+    let accessToken = sessionStorage.getItem("app_token") || "";
+    let monToken = sessionStorage.getItem("app_mon_token") || "";
+    let currentRole = "unknown";
+
+    const sidebarConfig = {
+      trainer: [
+        { id: 'view-trainer-batch', label: 'Create Batch' },
+        { id: 'view-trainer-invite', label: 'Batch Invites' },
+        { id: 'view-trainer-session', label: 'Schedule Session' },
+        { id: 'view-trainer-attendance', label: 'Session Attendance' }
+      ],
+      student: [
+        { id: 'view-student-join', label: 'Join Batch' },
+        { id: 'view-student-attendance', label: 'Mark Attendance' }
+      ],
+      institution: [
+        { id: 'view-inst-batch', label: 'Create Batch' },
+        { id: 'view-inst-summary', label: 'Batch Summary' }
+      ],
+      programme_manager: [
+        { id: 'view-pm-prog', label: 'Global Programme View' },
+        { id: 'view-pm-inst', label: 'Institution View' }
+      ],
+      monitoring_officer: [
+        { id: 'view-mon-auth', label: 'Authorize Key' },
+        { id: 'view-mon-data', label: 'Live Data Feed' }
+      ]
+    };
+
+    function parseJwt(token) {
+      try { return JSON.parse(atob(token.split(".")[1])); } catch(e) { return null; }
+    }
+
+    function showAlert(id, msg, isSuccess) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = `alert ${isSuccess ? 'success' : 'error'}`;
+    }
+
+    async function apiCall(endpoint, method, body, useMonToken=false) {
+      const tokenToUse = useMonToken ? monToken : accessToken;
+      const headers = { 'Content-Type': 'application/json' };
+      if (tokenToUse) headers['Authorization'] = `Bearer ${tokenToUse}`;
+      
+      const res = await fetch(API_BASE + endpoint, {
+        method, headers, body: body ? JSON.stringify(body) : null
+      });
+      const data = await res.json().catch(()=>({}));
+      return { status: res.status, data };
+    }
+
+    let isLoginMode = true;
+
+    function toggleAuthMode() {
+      isLoginMode = !isLoginMode;
+      const subtitle = document.getElementById('auth-subtitle');
+      const err = document.getElementById('login-error');
+      const signupFields = document.getElementById('signup-fields');
+      const mainBtn = document.getElementById('auth-main-btn');
+      const toggleText = document.getElementById('auth-toggle-text');
+      const toggleLink = document.getElementById('auth-toggle-link');
+      
+      err.style.display = 'none';
+
+      if (isLoginMode) {
+        subtitle.textContent = "Sign in to application portal";
+        signupFields.classList.add('hidden');
+        mainBtn.textContent = "Sign In";
+        toggleText.textContent = "Don't have an account?";
+        toggleLink.textContent = "Sign Up";
+      } else {
+        subtitle.textContent = "Create a new account";
+        signupFields.classList.remove('hidden');
+        mainBtn.textContent = "Sign Up";
+        toggleText.textContent = "Already have an account?";
+        toggleLink.textContent = "Sign In";
+        toggleInstitutionField();
+      }
+    }
+
+    function toggleInstitutionField() {
+      const role = document.getElementById('auth-role').value;
+      const institutionWrap = document.getElementById('auth-institution-wrap');
+      institutionWrap.classList.toggle('hidden', !['student', 'trainer', 'institution'].includes(role));
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById('auth-email').value;
+      const pass = document.getElementById('auth-password').value;
+      const err = document.getElementById('login-error');
+      
+      err.style.display = 'none';
+
+      if (isLoginMode) {
+        const { status, data } = await apiCall('/auth/login', 'POST', {email, password: pass});
+        if (status === 200 && data.access_token) {
+          accessToken = data.access_token;
+          monToken = "";
+          sessionStorage.setItem("app_token", accessToken);
+          sessionStorage.removeItem("app_mon_token");
+          initApp();
+        } else {
+          err.style.display = 'block';
+          err.textContent = data.detail || 'Login failed';
+        }
+      } else {
+        // Signup Mode
+        const name = document.getElementById('auth-name').value;
+        const role = document.getElementById('auth-role').value;
+        const institutionIdRaw = document.getElementById('auth-institution-id').value.trim();
+        const institutionId = institutionIdRaw ? Number(institutionIdRaw) : null;
+
+        // Basic frontend validation for email
+        if (!email.includes('@') || !email.includes('.com')) {
+          err.style.display = 'block';
+          err.textContent = 'Please enter a valid email addressing containing @ and .com';
+          return;
+        }
+
+        if (pass.length < 6) {
+          err.style.display = 'block';
+          err.textContent = 'Password must be at least 6 characters.';
+          return;
+        }
+        
+        if (!name) {
+          err.style.display = 'block';
+          err.textContent = 'Name is required.';
+          return;
+        }
+
+        if (["student", "trainer", "institution"].includes(role) && !institutionId) {
+          err.style.display = 'block';
+          err.textContent = 'Institution ID is required for student, trainer, and institution sign up.';
+          return;
+        }
+
+        const signupPayload = { email, password: pass, name, role };
+        if (institutionId) signupPayload.institution_id = institutionId;
+
+        const { status, data } = await apiCall('/auth/signup', 'POST', signupPayload);
+        if (status === 201 || status === 200) {
+          if (data.access_token) {
+            accessToken = data.access_token;
+            sessionStorage.setItem("app_token", accessToken);
+            initApp();
+          } else {
+            err.className = 'error-msg';
+            err.style.color = '#10b981';
+            err.style.backgroundColor = '#d1fae5';
+            err.style.display = 'block';
+            err.textContent = 'Account created! You can now log in.';
+            setTimeout(() => { 
+                err.style.color = ''; err.style.backgroundColor = '';
+                toggleAuthMode(); 
+            }, 1500);
+          }
+        } else {
+          err.className = 'error-msg';
+          err.style.color = ''; err.style.backgroundColor = '';
+          err.style.display = 'block';
+          err.textContent = data.detail || 'Registration failed';
+        }
+      }
+    }
+
+    function handleLogout() {
+      accessToken = "";
+      monToken = "";
+      sessionStorage.clear();
+      document.getElementById('app-layout').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+
+    function switchView(viewId, titleStr) {
+      document.querySelectorAll('.view-card').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(viewId).classList.add('active');
+      document.getElementById(`nav-${viewId}`).classList.add('active');
+      document.getElementById('page-title').textContent = titleStr;
+    }
+
+    function initApp() {
+      if (!accessToken) return;
+      const payload = parseJwt(accessToken);
+      if (!payload || payload.exp * 1000 < Date.now()) {
+        handleLogout();
+        return;
+      }
+      currentRole = payload.role;
+      document.getElementById('user-role-badge').textContent = currentRole.replace('_', ' ');
+      
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-layout').classList.remove('hidden');
+      
+      // Build Sidebar
+      const navContainer = document.getElementById('sidebar-nav');
+      navContainer.innerHTML = '';
+      const links = sidebarConfig[currentRole] || [];
+      links.forEach((link, idx) => {
+        const a = document.createElement('a');
+        a.className = 'nav-item';
+        a.id = `nav-${link.id}`;
+        a.textContent = link.label;
+        a.onclick = () => switchView(link.id, link.label);
+        navContainer.appendChild(a);
+      });
+      
+      // Load first view
+      if (links.length > 0) switchView(links[0].id, links[0].label);
+    }
+
+    // Generic form submitter
+    async function submitForm(url, method, bodyObj, alertId) {
+      const { status, data } = await apiCall(url, method, bodyObj);
+      showAlert(alertId, data.message || data.detail || JSON.stringify(data), status === 200);
+    }
+
+    // Custom endpoints handlers
+    async function scheduleSession() {
+      const body = {
+        batch_id: Number(document.getElementById('tr-sess-batch-id').value),
+        title: document.getElementById('tr-sess-title').value,
+        date: document.getElementById('tr-sess-date').value,
+        start_time: document.getElementById('tr-sess-start').value,
+        end_time: document.getElementById('tr-sess-end').value
+      };
+      if (body.start_time.length === 5) body.start_time += ":00";
+      if (body.end_time.length === 5) body.end_time += ":00";
+      await submitForm('/sessions', 'POST', body, 'tr-sess-alert');
+    }
+
+    async function fetchSessionAttendance() {
+      const sId = document.getElementById('tr-att-sess-id').value;
+      const { status, data } = await apiCall(`/sessions/${sId}/attendance`, 'GET');
+      if (status === 200) {
+        document.getElementById('tr-att-alert').style.display='none';
+        document.getElementById('tr-att-results').classList.remove('hidden');
+        const tb = document.getElementById('tr-att-tbody');
+        tb.innerHTML = '';
+        data.records.forEach(r => {
+          tb.innerHTML += `<tr><td>${r.student_name}</td><td>${r.student_email}</td><td class="status-${r.status}">${r.status}</td><td>${new Date(r.marked_at).toLocaleString()}</td></tr>`;
+        });
+      } else {
+        document.getElementById('tr-att-results').classList.add('hidden');
+        showAlert('tr-att-alert', data.detail || 'Error loading', false);
+      }
+    }
+
+    async function markAttendance() {
+      const body = {
+        session_id: Number(document.getElementById('st-att-sess-id').value),
+        status: document.getElementById('st-att-status').value
+      };
+      await submitForm('/attendance/mark', 'POST', body, 'st-att-alert');
+    }
+
+    async function fetchBatchSummary() {
+      const bId = document.getElementById('inst-sum-id').value;
+      const { status, data } = await apiCall(`/batches/${bId}/summary`, 'GET');
+      if(status === 200) {
+        document.getElementById('inst-sum-alert').style.display='none';
+        document.getElementById('inst-sum-results').classList.remove('hidden');
+        document.getElementById('inst-sum-name').textContent = data.batch_name;
+        document.getElementById('inst-s-total').textContent = data.total_sessions;
+        document.getElementById('inst-s-p').textContent = data.present;
+        document.getElementById('inst-s-l').textContent = data.late;
+        document.getElementById('inst-s-a').textContent = data.absent;
+      } else {
+        document.getElementById('inst-sum-results').classList.add('hidden');
+        showAlert('inst-sum-alert', data.detail, false);
+      }
+    }
+
+    async function fetchProgrammeSummary() {
+      const { status, data } = await apiCall(`/programme/summary`, 'GET');
+      if(status === 200) {
+        document.getElementById('pm-prog-alert').style.display='none';
+        document.getElementById('pm-prog-results').classList.remove('hidden');
+        document.getElementById('pm-p-inst').textContent = data.total_institutions;
+        document.getElementById('pm-p-bat').textContent = data.total_batches;
+        document.getElementById('pm-p-stu').textContent = data.total_students;
+        document.getElementById('pm-p-ses').textContent = data.total_sessions;
+        document.getElementById('pm-p-pre').textContent = data.present;
+      } else {
+        showAlert('pm-prog-alert', data.detail, false);
+      }
+    }
+
+    async function fetchInstSummary() {
+      const iId = document.getElementById('pm-inst-id').value;
+      const { status, data } = await apiCall(`/institutions/${iId}/summary`, 'GET');
+      if(status === 200) {
+        document.getElementById('pm-inst-alert').style.display='none';
+        document.getElementById('pm-inst-results').classList.remove('hidden');
+        document.getElementById('pm-inst-name').textContent = data.institution_name;
+        document.getElementById('pm-i-bat').textContent = data.total_batches;
+        document.getElementById('pm-i-stu').textContent = data.total_students;
+        document.getElementById('pm-i-ses').textContent = data.total_sessions;
+      } else {
+         document.getElementById('pm-inst-results').classList.add('hidden');
+         showAlert('pm-inst-alert', data.detail, false);
+      }
+    }
+
+    async function getMonitoringToken() {
+      const key = document.getElementById('mon-key').value;
+      const { status, data } = await apiCall('/auth/monitoring-token', 'POST', {key});
+      if(status === 200) {
+        monToken = data.access_token;
+        sessionStorage.setItem('app_mon_token', monToken);
+        showAlert('mon-auth-alert', 'Token Authorized Successfully!', true);
+      } else {
+        showAlert('mon-auth-alert', data.detail || 'Access denied', false);
+      }
+    }
+
+    async function fetchGlobalAttendance() {
+      const { status, data } = await apiCall('/monitoring/attendance', 'GET', null, true);
+      if(status === 200) {
+        document.getElementById('mon-data-alert').style.display='none';
+        document.getElementById('mon-data-results').classList.remove('hidden');
+        const tb = document.getElementById('mon-data-tbody');
+        tb.innerHTML = '';
+        data.records.forEach(r => {
+          tb.innerHTML += `<tr><td>#${r.attendance_id}</td><td>${r.session_title}</td><td>${r.student_name}</td><td class="status-${r.status}">${r.status}</td><td>${new Date(r.marked_at).toLocaleString()}</td></tr>`;
+        });
+      } else {
+        document.getElementById('mon-data-results').classList.add('hidden');
+        showAlert('mon-data-alert', data.detail || 'Token missing or invalid.', false);
+      }
+    }
+
+    // Start on load
+    initApp();
+  </script>
+</body>
+</html>
