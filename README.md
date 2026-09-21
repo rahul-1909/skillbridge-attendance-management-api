@@ -1,25 +1,91 @@
 # SkillBridge Attendance Management API
 
-A modern, role-based educational attendance and training cohort management system built with **FastAPI**, **SQLAlchemy**, and **Pydantic**. Features multi-tenant batch management, secure single-use invite tokens, strict Indian Standard Time (IST) attendance window validation, dual-token scoped telemetry for monitoring officers, and a sleek, modern, minimal web dashboard.
+A production-ready, multi-tenant educational attendance and cohort management API built with **FastAPI**, **SQLAlchemy**, and **Pydantic**. Engineered for vocational institutions and training programs to manage batches, schedule classroom sessions, issue single-use secure invite tokens, enforce strict Indian Standard Time (IST) attendance windows, and stream live telemetry via dual-token authentication.
 
 ---
 
-## 🚀 Live Server & Deployment
+## 🌐 Live Service & Documentation
 
-- **Main Application Dashboard:** [https://skillbridge-attendance-management-api.onrender.com/](https://skillbridge-attendance-management-api.onrender.com/)
-- **Interactive REST API Documentation (Swagger):** [https://skillbridge-attendance-management-api.onrender.com/docs](https://skillbridge-attendance-management-api.onrender.com/docs)
+- **Live Application:** [https://skillbridge-attendance-management-api.onrender.com/](https://skillbridge-attendance-management-api.onrender.com/)
+- **Interactive Swagger Documentation:** [https://skillbridge-attendance-management-api.onrender.com/docs](https://skillbridge-attendance-management-api.onrender.com/docs)
 - **Health Check Endpoint:** [https://skillbridge-attendance-management-api.onrender.com/health](https://skillbridge-attendance-management-api.onrender.com/health)
 
 ---
 
-## ✨ What's New in This Version
+## 🏛️ System Architecture
 
-- **Modern Minimalist Frontend:** Completely redesigned dark/slate glassmorphism interface featuring responsive layouts, micro-interactions, and KPI metric cards.
-- **1-Click Quick Demo Login:** Instant one-click persona switcher on the login screen to test Trainer, Student, Institution, PM, and Monitoring Officer flows without manually entering credentials.
-- **Real-Time Live IST Clock:** Synchronized with Indian Standard Time (`UTC+05:30`) to visually confirm whether session attendance windows are currently active.
-- **Built-in Developer API Console:** Live slide-over inspector displaying outgoing requests, headers, and formatted JSON responses.
-- **Automated Zero-Config Seeding (`AUTO_SEED=true`):** Newly deployed environments automatically populate test institutions, accounts, batches, and sessions on first boot.
-- **Dual-Root Deployment Compatibility:** Works out-of-the-box whether your cloud platform points to the repository root or the `submission/` directory (`render.yaml`, `Dockerfile`, `Procfile`, and root proxy `main.py` included).
+```
++---------------------------------------------------------------------------------------+
+|                                    CLIENT LAYER                                       |
+|  - Minimalist Web Dashboard (SPA)             - API Clients / Swagger UI / cURL       |
++-------------------------------------------+-------------------------------------------+
+                                            |
+                                            | HTTP (JSON / Bearer Token)
+                                            v
++---------------------------------------------------------------------------------------+
+|                               FASTAPI APPLICATION LAYER                               |
+|  - Uvicorn ASGI Server (CORS Middleware, Route Dispatcher, Global Exception Handlers) |
++-------------------------------------------+-------------------------------------------+
+                                            |
+                                            v
++---------------------------------------------------------------------------------------+
+|                             SECURITY & AUTHENTICATION LAYER                           |
+|  - Password Hashing (PBKDF2-SHA256)                                                   |
+|  - Standard JWT Access Token (typ="access", 24h lifetime)                             |
+|  - Scoped Telemetry Token for Monitoring Officers (typ="monitoring", scope="read")   |
+|  - Role-Based Access Control (RBAC): Student, Trainer, Institution, PM, Monitor       |
++-------------------------------------------+-------------------------------------------+
+                                            |
+                                            v
++---------------------------------------------------------------------------------------+
+|                                  BUSINESS LOGIC CORE                                  |
+|  +--------------------+  +----------------------+  +--------------------------------+ |
+|  | Batch & Invites    |  | Sessions Engine      |  | Attendance Engine              | |
+|  | - Single-Use Token |  | - Date & Time Window |  | - Strict IST Active Window     | |
+|  | - Expiration Check |  | - Trainer Assignment |  | - Upsert Attendance Record     | |
+|  +--------------------+  +----------------------+  +--------------------------------+ |
+|  +----------------------------------------------------------------------------------+ |
+|  | Analytics & Reporting Engine (Batch Summaries, Institution & Global Telemetry)  | |
+|  +----------------------------------------------------------------------------------+ |
++-------------------------------------------+-------------------------------------------+
+                                            |
+                                            v
++---------------------------------------------------------------------------------------+
+|                                DATA ACCESS LAYER (ORM)                                |
+|  - SQLAlchemy 2.0 (Declarative Models, Relationships, Constraints, Auto-Seeding)      |
++-------------------------------------------+-------------------------------------------+
+                                            |
+                         +------------------+------------------+
+                         |                                     |
+                         v                                     v
+           +---------------------------+         +---------------------------+
+           | PostgreSQL (Render Cloud) |         | SQLite (Local / Pytest)   |
+           +---------------------------+         +---------------------------+
+```
+
+---
+
+## 🔑 Core Features & Architectural Decisions
+
+### 1. Dual-Token Architecture for Monitoring
+Instead of granting broad administrative access with a single JWT, **Monitoring Officers** use a two-step scoped credential exchange:
+1. Log in via `/auth/login` to obtain an identity token.
+2. Call `POST /auth/monitoring-token` with the secure system key (`MONITORING_API_KEY`) to receive a short-lived (1-hour) scoped token.
+3. The live telemetry route (`GET /monitoring/attendance`) strictly validates `typ="monitoring"` and `scope="monitoring_read"`.
+
+### 2. Timezone-Aware Attendance Engine (IST)
+Vocational training sessions operate on fixed physical schedule windows. When a student marks attendance:
+- Server checks the live clock converted to **Indian Standard Time (IST, UTC+05:30)**.
+- Rejects attendance submission with `403 Session is not currently active` if the request is made before `start_time` or after `end_time`.
+- Enforces batch enrollment checks to prevent unauthorized submissions.
+
+### 3. Single-Use Invite Token System
+- Trainers generate URL-safe invite tokens (`secrets.token_urlsafe(24)`) with configurable expiration (`expires_in_hours`).
+- Tokens have an `expires_at` timestamp and a `used` boolean flag in the database.
+- Once a student redeems a token via `/batches/join`, it is immediately flagged as `used = True` to prevent replay attacks.
+
+### 4. Automated Zero-Config Seeding (`AUTO_SEED=true`)
+When newly deployed to a cloud environment (e.g., Render, Railway, Fly.io), the application verifies whether the database contains user accounts. If empty, it safely seeds demo institutions, batches, trainers, students, sessions, and records on first boot.
 
 ---
 
@@ -27,114 +93,157 @@ A modern, role-based educational attendance and training cohort management syste
 
 > **Universal Password:** `SkillBridge123!`
 
-| Role | Email | Capabilities |
+| Role | Email | Scope & Permissions |
 | :--- | :--- | :--- |
-| **Trainer** | `trainer1@skillbridgeapp.com` | Create batches, generate single-use invite tokens, schedule training sessions, inspect session rosters |
-| **Student** | `student1@skillbridgeapp.com` | Join batches via invite tokens, record session attendance within active IST windows |
-| **Institution** | `institution1@skillbridgeapp.com` | Create institutional cohorts, view aggregated batch attendance analytics |
-| **Programme Manager** | `pm@skillbridgeapp.com` | Register new institutions, view global programme & institution telemetry |
-| **Monitoring Officer** | `monitor@skillbridgeapp.com` | Exchange secret key for short-lived scoped token, stream live global attendance feed |
+| **Trainer** | `trainer1@skillbridgeapp.com` | Create batches, generate invite tokens, schedule sessions, view session attendance |
+| **Student** | `student1@skillbridgeapp.com` | Join batches using tokens, submit attendance during active session window |
+| **Institution** | `institution1@skillbridgeapp.com` | Create institutional cohorts, view aggregated batch performance summaries |
+| **Programme Manager** | `pm@skillbridgeapp.com` | Register new institutions, view global programme & institution analytics |
+| **Monitoring Officer** | `monitor@skillbridgeapp.com` | Authorize secret key for scoped token, monitor real-time global telemetry feed |
 
 ---
 
-## 🛠️ Local Development Setup
+## 🛠️ Tech Stack & Dependencies
 
-### Prerequisites
-- Python 3.10+
-- `pip` package manager
+- **Language & Runtime:** Python 3.10+
+- **Web Framework:** [FastAPI](https://fastapi.tiangolo.com/) (0.116+)
+- **ASGI Web Server:** [Uvicorn](https://www.uvicorn.org/) (0.35+)
+- **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/) 2.0
+- **Database:** PostgreSQL (Cloud) / SQLite (Local & Testing)
+- **Token Management:** `python-jose` (HS256 JWT)
+- **Password Security:** `passlib` with `pbkdf2_sha256`
+- **Validation:** Pydantic v2 & `email-validator`
+- **Testing:** `pytest` & `httpx`
+- **Frontend:** Clean Minimalist Vanilla JS / CSS Single Page Application
 
-### Steps
+---
+
+## 📂 Project Directory Structure
+
+```
+skillbridge-attendance-management-api/
+├── main.py                        # Root proxy entrypoint for cloud hosting
+├── requirements.txt               # Root dependency specification
+├── render.yaml                    # Render Blueprint configuration
+├── Dockerfile                     # Container definition for Docker/Railway/Fly.io
+├── Procfile                       # Process manager definition
+├── .env.example                   # Environment variable template
+├── README.md                      # Complete system documentation
+└── submission/
+    ├── requirements.txt           # Pinned production requirements
+    ├── render.yaml                # Sub-directory Render blueprint
+    ├── Procfile                   # Sub-directory process definition
+    ├── .env.example
+    ├── src/
+    │   ├── db.py                  # Database engine, connection pooling, session generator
+    │   ├── models.py              # SQLAlchemy DB models & relational constraints
+    │   ├── schemas.py             # Pydantic request/response validation schemas
+    │   ├── auth.py                # Password hashing and JWT generation
+    │   ├── dependencies.py        # RBAC dependencies & token validation
+    │   ├── seed.py                # Idempotent database population script
+    │   ├── main.py                # FastAPI app, routing, CORS, and startup hooks
+    │   └── frontend/
+    │       └── application.html   # Clean, neat, minimalist web dashboard
+    └── tests/
+        ├── conftest.py            # Test database fixture & test harness
+        └── test_api.py            # Complete integration test suite
+```
+
+---
+
+## 💻 Local Development Setup
+
+### 1. Clone & Setup Virtual Environment
 ```bash
-# 1. Clone repository and navigate to submission directory
+# Navigate to the project directory
 cd submission
 
-# 2. Create and activate a virtual environment
+# Create virtual environment
 python -m venv .venv
 
+# Activate virtual environment
 # On Windows:
 .venv\Scripts\activate
-# On Linux / macOS:
+# On macOS / Linux:
 source .venv/bin/activate
 
-# 3. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
+```
 
-# 4. Copy environment template
+### 2. Configure Environment Variables
+```bash
 cp .env.example .env
+```
 
-# 5. Start the local server (auto-seeds database on first launch)
+### 3. Run Application
+```bash
 uvicorn src.main:app --reload --port 8000
 ```
-
-Open your browser at `http://localhost:8000/` to explore the dashboard or `http://localhost:8000/docs` for the interactive Swagger UI.
-
----
-
-## ☁️ Deploying to Render (or Cloud PaaS)
-
-### Option A: Render Blueprint (Recommended - 1 Click)
-1. Fork or push this repository to GitHub.
-2. In the [Render Dashboard](https://dashboard.render.com/), click **New +** → **Blueprint**.
-3. Select your repository. Render will automatically detect [`render.yaml`](render.yaml) and configure:
-   - **Build Command:** `pip install -r submission/requirements.txt`
-   - **Start Command:** `uvicorn submission.src.main:app --host 0.0.0.0 --port $PORT`
-   - **Environment Variables:** `PYTHON_VERSION=3.11.9`, `AUTO_SEED=true`, `MONITORING_API_KEY=monitoring-dev-key`
-4. Click **Apply**. Your app will build, auto-seed the demo database, and go live!
-
-### Option B: Manual Web Service Setup on Render
-If configuring manually as a **Web Service**:
-- **Environment:** `Python`
-- **Build Command:** `pip install -r submission/requirements.txt` (or set Root Directory to `submission` and use `pip install -r requirements.txt`)
-- **Start Command:** `uvicorn submission.src.main:app --host 0.0.0.0 --port $PORT`
-- **Environment Variables:**
-  - `PYTHON_VERSION`: `3.11.9`
-  - `AUTO_SEED`: `true`
-  - `MONITORING_API_KEY`: `monitoring-dev-key`
-  - `JWT_SECRET`: Any secure random string
-
-### Option C: Docker Deployment
-A production-ready [`Dockerfile`](Dockerfile) is included. You can deploy to any container platform (Railway, Fly.io, Render Docker, or AWS ECS):
-```bash
-docker build -t skillbridge-api .
-docker run -p 8000:8000 -e AUTO_SEED=true skillbridge-api
-```
+Open **`http://localhost:8000/`** to view the clean web interface or **`http://localhost:8000/docs`** for the Swagger API documentation.
 
 ---
 
-## 🧪 Testing
+## 🧪 Automated Testing
 
-Run the integration test suite with `pytest`:
+Execute the test suite using `pytest`:
 ```bash
 cd submission
 pytest tests/test_api.py -v
 ```
 
-The test suite covers:
-- User signup and login JWT issuance
-- Trainer batch & session creation
-- Student enrollment via invite tokens
-- IST session attendance marking window boundaries
-- Role-based authorization and HTTP 401/403/405 protection
+### Test Coverage Highlights:
+- ✅ Student registration, authentication, and JWT issuance
+- ✅ Trainer batch creation and classroom session scheduling
+- ✅ Single-use invite token generation and student enrollment
+- ✅ Timezone validation (IST active window attendance marking)
+- ✅ Scoped telemetry token enforcement and HTTP 401/403/405 checks
 
 ---
 
-## 📡 Core API Endpoints
+## 📡 Complete API Reference
 
 ### Authentication
-- `POST /auth/signup` - Register a new user (`student`, `trainer`, `institution`, `programme_manager`, `monitoring_officer`)
-- `POST /auth/login` - Authenticate and receive standard Bearer access token
-- `POST /auth/monitoring-token` - Exchange secret API key for scoped monitoring token (`typ=monitoring`, `scope=monitoring_read`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/signup` | Public | Register user (`student`, `trainer`, `institution`, `programme_manager`, `monitoring_officer`) |
+| `POST` | `/auth/login` | Public | Authenticate user and receive Bearer access token |
+| `POST` | `/auth/monitoring-token` | Monitoring Officer | Exchange API key for scoped telemetry token |
 
-### Batches & Sessions
-- `POST /batches` - Create a new cohort batch (Trainers & Institutions)
-- `POST /batches/{id}/invite` - Generate a time-limited, single-use invite token (Trainers)
-- `POST /batches/join` - Redeem an invite token to enroll in a batch (Students)
-- `POST /sessions` - Schedule a classroom training session (Trainers)
-- `GET /sessions/{id}/attendance` - Retrieve student attendance list for a session (Trainers)
+### Batches & Invites
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/batches` | Trainer / Institution | Create a new batch cohort |
+| `POST` | `/batches/{id}/invite` | Trainer | Generate a single-use invite token |
+| `POST` | `/batches/join` | Student | Join batch using invite token |
+| `GET` | `/batches/{id}/summary` | Institution | Retrieve session and attendance breakdown |
 
-### Attendance & Analytics
-- `POST /attendance/mark` - Mark attendance (`present`, `late`, `absent`) within the active IST session window (Students)
-- `GET /batches/{id}/summary` - View session counts and attendance summary (Institutions)
-- `GET /programme/summary` - View platform-wide global attendance metrics (Programme Managers)
-- `GET /institutions/{id}/summary` - View institution performance metrics (Programme Managers)
-- `GET /monitoring/attendance` - Stream live attendance telemetry feed (Monitoring Officers with scoped token)
+### Sessions & Attendance
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/sessions` | Trainer | Schedule classroom training session |
+| `GET` | `/sessions/{id}/attendance` | Trainer | View student attendance records for session |
+| `POST` | `/attendance/mark` | Student | Mark attendance (`present`, `late`, `absent`) within active IST window |
+
+### Management & Monitoring
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/institutions` | Programme Manager | Register a new vocational institute |
+| `GET` | `/institutions/{id}/summary` | Programme Manager | Retrieve metrics for an institution |
+| `GET` | `/programme/summary` | Programme Manager | Retrieve platform-wide global telemetry |
+| `GET` | `/monitoring/attendance` | Monitoring Officer | Stream latest 200 real-time attendance events |
+| `GET` | `/time` | Public | Get server Indian Standard Time (IST) clock |
+| `GET` | `/health` | Public | Service health verification |
+
+---
+
+## ☁️ Deployment Guide
+
+### Deploy to Render via Blueprint (1-Click)
+1. Fork or push this repository to GitHub.
+2. In the [Render Dashboard](https://dashboard.render.com/), click **New +** → **Blueprint**.
+3. Select your repository. Render will automatically read `render.yaml` and set:
+   - **Build Command:** `pip install -r submission/requirements.txt`
+   - **Start Command:** `uvicorn submission.src.main:app --host 0.0.0.0 --port $PORT`
+   - **Environment Variables:** `PYTHON_VERSION=3.11.9`, `AUTO_SEED=true`, `MONITORING_API_KEY=monitoring-dev-key`
+4. Click **Apply**.
