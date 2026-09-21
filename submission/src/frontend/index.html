@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge Role Login</title>
+  <style>
+    :root {
+      --bg: #f5f0e6;
+      --ink: #1f2f2a;
+      --panel: #ffffff;
+      --brand: #136f63;
+      --accent: #d97706;
+      --line: #ded5c5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: start center;
+      padding: 24px 16px;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 20% 10%, #ece1c6 0%, #f8f5ec 45%),
+                  linear-gradient(135deg, #f8f5ec 0%, #f1ebdc 100%);
+    }
+    .card {
+      width: min(920px, 100%);
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 28px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(1.4rem, 3vw, 1.9rem); }
+    h2 { margin: 0 0 10px; font-size: 1.1rem; }
+    p { margin: 0 0 16px; color: #4f615e; }
+    .row { display: grid; gap: 8px; }
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section {
+      margin-top: 18px;
+      border-top: 1px solid #ece5d6;
+      padding-top: 16px;
+    }
+    label { font-size: 0.88rem; color: #4f615e; }
+    input, select, button {
+      border: 1px solid #d2c4aa;
+      border-radius: 10px;
+      padding: 10px;
+      font: inherit;
+      width: 100%;
+      background: white;
+    }
+    button {
+      border: none;
+      color: white;
+      font-weight: 700;
+      background: linear-gradient(120deg, var(--brand), #1e8f7f);
+      cursor: pointer;
+    }
+    button.alt {
+      background: linear-gradient(120deg, var(--accent), #ea9b2f);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: #def2ea;
+      color: #135f52;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .buttons {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .hidden { display: none !important; }
+    pre {
+      margin: 12px 0 0;
+      border: 1px solid #dce5eb;
+      border-radius: 10px;
+      background: #f7fafc;
+      min-height: 140px;
+      max-height: 360px;
+      overflow: auto;
+      padding: 12px;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="topbar">
+      <h1>SkillBridge Login</h1>
+      <div>Role: <span id="roleTag" class="pill">none</span></div>
+    </div>
+
+    <p>Login first with email and password. After login, only role-allowed API buttons appear at the bottom.</p>
+
+    <section id="loginSection" class="row">
+      <div class="grid">
+        <div class="row">
+          <label>Email</label>
+          <input id="email" placeholder="trainer1@skillbridgeapp.com" />
+        </div>
+        <div class="row">
+          <label>Password</label>
+          <input id="password" type="password" placeholder="SkillBridge123!" />
+        </div>
+      </div>
+      <div class="grid">
+        <button id="loginBtn">Login</button>
+      </div>
+    </section>
+
+    <section class="section hidden" id="apiSection">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>API Action Buttons</h2>
+        <button id="logoutBtn" class="alt" style="width: auto;">Logout</button>
+      </div>
+      <p id="actionHint">Only actions for your logged-in role are shown.</p>
+
+      <div id="trainerActions" class="buttons hidden">
+        <input id="trainerBatchName" placeholder="Batch name" />
+        <button id="trainerCreateBatchBtn">POST /batches</button>
+
+        <input id="inviteBatchId" placeholder="Batch ID" />
+        <button id="inviteBtn">POST /batches/{id}/invite</button>
+
+        <input id="sessionBatchId" placeholder="Batch ID" />
+        <input id="sessionTitle" placeholder="Session title" />
+        <input id="sessionDate" placeholder="YYYY-MM-DD" />
+        <input id="startTime" placeholder="HH:MM:SS" />
+        <input id="endTime" placeholder="HH:MM:SS" />
+        <button id="createSessionBtn">POST /sessions</button>
+
+        <input id="attendanceSessionId" placeholder="Session ID" />
+        <button id="sessionAttendanceBtn">GET /sessions/{id}/attendance</button>
+      </div>
+
+      <div id="institutionActions" class="buttons hidden">
+        <input id="institutionBatchName" placeholder="Batch name" />
+        <button id="institutionCreateBatchBtn">POST /batches</button>
+        <input id="batchSummaryId" placeholder="Batch ID" />
+        <button id="batchSummaryBtn">GET /batches/{id}/summary</button>
+      </div>
+
+      <div id="studentActions" class="buttons hidden">
+        <input id="joinToken" placeholder="Invite token" />
+        <button id="joinBatchBtn">POST /batches/join</button>
+        <input id="markSessionId" placeholder="Session ID" />
+        <select id="attendanceStatus">
+          <option value="present">present</option>
+          <option value="late">late</option>
+          <option value="absent">absent</option>
+        </select>
+        <button id="markAttendanceBtn">POST /attendance/mark</button>
+      </div>
+
+      <div id="pmActions" class="buttons hidden">
+        <button id="programmeBtn">GET /programme/summary</button>
+        <input id="institutionId" placeholder="Institution ID" />
+        <button id="institutionBtn">GET /institutions/{id}/summary</button>
+      </div>
+
+      <div id="monitoringActions" class="buttons hidden">
+        <input id="monitoringKey" placeholder="MONITORING_API_KEY" />
+        <button id="monitoringTokenBtn">POST /auth/monitoring-token</button>
+        <button id="monitoringAttendanceBtn">GET /monitoring/attendance</button>
+      </div>
+
+      <pre id="output">No requests yet.</pre>
+    </section>
+  </main>
+
+  <script>
+    const roleTag = document.getElementById("roleTag");
+    const output = document.getElementById("output");
+    const actionHint = document.getElementById("actionHint");
+    const apiSection = document.getElementById("apiSection");
+    const loginSection = document.getElementById("loginSection");
+
+    const trainerActions = document.getElementById("trainerActions");
+    const studentActions = document.getElementById("studentActions");
+    const institutionActions = document.getElementById("institutionActions");
+    const pmActions = document.getElementById("pmActions");
+    const monitoringActions = document.getElementById("monitoringActions");
+
+    let accessToken = sessionStorage.getItem("accessToken") || "";
+    let monitoringToken = sessionStorage.getItem("monitoringToken") || "";
+
+    function decodeRole(token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+        if (isExpired) return "unknown";
+        return payload.role || "unknown";
+      } catch {
+        return "unknown";
+      }
+    }
+
+    function hideAllActionAreas() {
+      trainerActions.classList.add("hidden");
+      studentActions.classList.add("hidden");
+      institutionActions.classList.add("hidden");
+      pmActions.classList.add("hidden");
+      monitoringActions.classList.add("hidden");
+    }
+
+    function showRoleActions(role) {
+      hideAllActionAreas();
+      loginSection.classList.add("hidden");
+      apiSection.classList.remove("hidden");
+      
+      if (role === "trainer") trainerActions.classList.remove("hidden");
+      if (role === "student") studentActions.classList.remove("hidden");
+      if (role === "institution") institutionActions.classList.remove("hidden");
+      if (role === "programme_manager") pmActions.classList.remove("hidden");
+      if (role === "monitoring_officer") monitoringActions.classList.remove("hidden");
+      
+      roleTag.textContent = role;
+      actionHint.textContent = `Only actions for role: ${role}`;
+    }
+
+    function handleRouting() {
+      const role = decodeRole(accessToken);
+      if (role !== "unknown") {
+        showRoleActions(role);
+        const desiredPath = `/role/${role}`;
+        if (window.location.pathname !== desiredPath) {
+          window.history.pushState(null, "", desiredPath);
+        }
+      } else {
+        accessToken = "";
+        monitoringToken = "";
+        sessionStorage.clear();
+        loginSection.classList.remove("hidden");
+        apiSection.classList.add("hidden");
+        hideAllActionAreas();
+        roleTag.textContent = "none";
+        
+        if (window.location.pathname !== "/") {
+          window.history.pushState(null, "", "/");
+        }
+      }
+    }
+
+    // Call on page load
+    handleRouting();
+
+    window.addEventListener("popstate", () => {
+      handleRouting();
+    });
+
+    async function callApi(path, method = "GET", body = null, token = "") {
+      const headers = { "Content-Type": "application/json" };
+      if (token) {
+        headers.Authorization = "Bearer " + token;
+      }
+      const response = await fetch(path, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null,
+      });
+      const data = await response.json().catch(() => ({}));
+      output.textContent = JSON.stringify({ method, path, status: response.status, data }, null, 2);
+      return { response, data };
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const { data } = await callApi("/auth/login", "POST", { email, password });
+      if (data.access_token) {
+        accessToken = data.access_token;
+        monitoringToken = "";
+        sessionStorage.setItem("accessToken", accessToken);
+        sessionStorage.removeItem("monitoringToken");
+        handleRouting();
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      accessToken = "";
+      monitoringToken = "";
+      sessionStorage.clear();
+      handleRouting();
+      output.textContent = "Logged out.";
+    });
+
+    document.getElementById("trainerCreateBatchBtn").addEventListener("click", async () => {
+      const name = document.getElementById("trainerBatchName").value.trim();
+      await callApi("/batches", "POST", { name }, accessToken);
+    });
+
+    document.getElementById("institutionCreateBatchBtn").addEventListener("click", async () => {
+      const name = document.getElementById("institutionBatchName").value.trim();
+      await callApi("/batches", "POST", { name }, accessToken);
+    });
+
+    document.getElementById("inviteBtn").addEventListener("click", async () => {
+      const batchId = document.getElementById("inviteBatchId").value.trim();
+      await callApi(`/batches/${batchId}/invite`, "POST", { expires_in_hours: 24 }, accessToken);
+    });
+
+    document.getElementById("createSessionBtn").addEventListener("click", async () => {
+      const payload = {
+        batch_id: Number(document.getElementById("sessionBatchId").value.trim()),
+        title: document.getElementById("sessionTitle").value.trim(),
+        date: document.getElementById("sessionDate").value.trim(),
+        start_time: document.getElementById("startTime").value.trim(),
+        end_time: document.getElementById("endTime").value.trim(),
+      };
+      await callApi("/sessions", "POST", payload, accessToken);
+    });
+
+    document.getElementById("sessionAttendanceBtn").addEventListener("click", async () => {
+      const sessionId = document.getElementById("attendanceSessionId").value.trim();
+      await callApi(`/sessions/${sessionId}/attendance`, "GET", null, accessToken);
+    });
+
+    document.getElementById("joinBatchBtn").addEventListener("click", async () => {
+      const token = document.getElementById("joinToken").value.trim();
+      await callApi("/batches/join", "POST", { token }, accessToken);
+    });
+
+    document.getElementById("markAttendanceBtn").addEventListener("click", async () => {
+      const payload = {
+        session_id: Number(document.getElementById("markSessionId").value.trim()),
+        status: document.getElementById("attendanceStatus").value,
+      };
+      await callApi("/attendance/mark", "POST", payload, accessToken);
+    });
+
+    document.getElementById("batchSummaryBtn").addEventListener("click", async () => {
+      const batchId = document.getElementById("batchSummaryId").value.trim();
+      await callApi(`/batches/${batchId}/summary`, "GET", null, accessToken);
+    });
+
+    document.getElementById("programmeBtn").addEventListener("click", async () => {
+      await callApi("/programme/summary", "GET", null, accessToken);
+    });
+
+    document.getElementById("institutionBtn").addEventListener("click", async () => {
+      const institutionId = document.getElementById("institutionId").value.trim();
+      await callApi(`/institutions/${institutionId}/summary`, "GET", null, accessToken);
+    });
+
+    document.getElementById("monitoringTokenBtn").addEventListener("click", async () => {
+      const key = document.getElementById("monitoringKey").value.trim();
+      const { data } = await callApi("/auth/monitoring-token", "POST", { key }, accessToken);
+      if (data.access_token) {
+        monitoringToken = data.access_token;
+        sessionStorage.setItem("monitoringToken", monitoringToken);
+        output.textContent = "Monitoring token acquired and saved.\n" + output.textContent;
+      }
+    });
+
+    document.getElementById("monitoringAttendanceBtn").addEventListener("click", async () => {
+      await callApi("/monitoring/attendance", "GET", null, monitoringToken);
+    });
+  </script>
+</body>
+</html>
