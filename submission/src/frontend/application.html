@@ -3,86 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkillBridge | Attendance & Training Management</title>
+  <title>SkillBridge — Attendance Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #090d16;
-      --bg-surface: #0f172a;
-      --bg-surface-elevated: #1e293b;
-      --bg-card: rgba(15, 23, 42, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-focus: #6366f1;
+      --bg: #0c0d0e;
+      --surface: #141517;
+      --surface-hover: #1c1e21;
+      --border: #232529;
+      --border-subtle: #1c1e21;
       
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+      --text: #f4f4f5;
+      --text-muted: #8b8f97;
+      --text-dim: #555962;
       
-      --brand-primary: #6366f1;
-      --brand-primary-hover: #4f46e5;
-      --brand-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --accent: #e4e4e7;
+      --accent-bg: #27272a;
       
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.12);
-      --info: #0ea5e9;
-      --info-bg: rgba(14, 165, 233, 0.12);
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.1);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.1);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.1);
       
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --radius-full: 9999px;
-      
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.2);
-      
-      --sidebar-width: 270px;
+      --sidebar-width: 250px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-base);
-      color: var(--text-primary);
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-    }
-
-    /* Ambient Background Glow */
-    .ambient-glow {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.04) 40%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      top: -150px;
-      right: -100px;
-    }
-
-    .ambient-glow-2 {
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      bottom: -100px;
-      left: 100px;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* Utilities */
@@ -92,704 +55,488 @@
     .justify-between { justify-content: space-between; }
     .gap-2 { gap: 8px; }
     .gap-3 { gap: 12px; }
-    .gap-4 { gap: 16px; }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      outline: none;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--brand-gradient);
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-    }
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-    }
-    .btn-primary:active { transform: translateY(0); }
-
-    .btn-secondary {
-      background: var(--bg-surface-elevated);
-      color: var(--text-primary);
-      border: 1px solid var(--border-subtle);
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-outline-brand {
-      background: rgba(99, 102, 241, 0.1);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    .btn-outline-brand:hover {
-      background: rgba(99, 102, 241, 0.2);
-      color: #ffffff;
-    }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 6px;
-    }
-
-    /* Form Inputs */
+    /* Inputs & Forms */
     .form-group {
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      margin-bottom: 16px;
     }
-
     .form-group label {
-      font-size: 13px;
+      display: block;
+      font-size: 12px;
       font-weight: 500;
-      color: var(--text-secondary);
-      display: flex;
-      justify-content: space-between;
+      color: var(--text-muted);
+      margin-bottom: 6px;
     }
-
     .form-control {
       width: 100%;
-      padding: 11px 14px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-size: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      padding: 9px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13.5px;
       outline: none;
+      transition: border-color 0.15s ease;
     }
     .form-control:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-      background: rgba(15, 23, 42, 0.85);
+      border-color: #52525b;
     }
     select.form-control {
       cursor: pointer;
     }
-    select.form-control option {
-      background: #0f172a;
-      color: #f8fafc;
+
+    /* Minimal Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn-primary {
+      background: #fafafa;
+      color: #09090b;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background: #e4e4e7;
+    }
+    .btn-secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+      border-color: #3f3f46;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
     }
 
-    /* Auth Screen */
+    /* Simple Clean Auth View */
     #auth-screen {
       position: fixed;
       inset: 0;
-      z-index: 100;
+      background: var(--bg);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #090d16 65%);
+      padding: 24px;
+      z-index: 100;
     }
-
-    .auth-card {
+    .auth-box {
       width: 100%;
-      max-width: 440px;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(24px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 36px 32px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), var(--shadow-glow);
-      position: relative;
-      z-index: 10;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 28px;
     }
-
-    .auth-brand-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      color: #a5b4fc;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .auth-header h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-
-    .auth-header p {
-      color: var(--text-secondary);
-      font-size: 14px;
+    .auth-header {
       margin-bottom: 24px;
     }
-
-    /* Quick Demo Login Bar */
-    .quick-demo-box {
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .quick-demo-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .auth-brand {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fafafa;
+    }
+    .auth-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .auth-header p {
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
-    .quick-chips {
+    .demo-selector {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .demo-title {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .demo-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
     }
-
-    .chip-btn {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-full);
-      color: var(--text-secondary);
-      padding: 5px 11px;
+    .chip {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 9px;
+      color: var(--text-muted);
       font-size: 12px;
-      font-weight: 500;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.15s ease;
+      transition: all 0.12s;
     }
-    .chip-btn:hover {
-      background: rgba(99, 102, 241, 0.2);
-      color: #ffffff;
-      border-color: rgba(99, 102, 241, 0.4);
-      transform: translateY(-1px);
+    .chip:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: #3f3f46;
     }
 
-    /* Main App Layout */
+    /* Layout */
     #app-container {
       display: flex;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      position: relative;
-      z-index: 1;
     }
 
-    /* Modern Sidebar */
-    .app-sidebar {
+    /* Sidebar */
+    .sidebar {
       width: var(--sidebar-width);
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid var(--border-subtle);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      z-index: 20;
     }
-
-    .sidebar-top {
-      padding: 24px 20px;
+    .sidebar-header {
+      padding: 16px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border);
     }
-
-    .logo-badge {
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .role-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 7px;
+      background: var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      text-transform: capitalize;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 14px 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+      padding: 6px 10px;
+    }
+    .nav-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      text-decoration: none;
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -0.01em;
-    }
-
-    .logo-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: var(--brand-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-    }
-
-    .sidebar-profile {
-      padding: 16px 20px;
-      background: rgba(30, 41, 59, 0.3);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 15px;
-      color: #ffffff;
-      flex-shrink: 0;
-    }
-
-    .profile-info {
-      flex: 1;
-      overflow: hidden;
-    }
-    .profile-role {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #a5b4fc;
-      margin-bottom: 2px;
-    }
-    .profile-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 18px 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .nav-category {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      padding: 8px 10px;
+      border-radius: 5px;
       color: var(--text-muted);
-      padding: 8px 12px 4px;
-    }
-
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 500;
-      text-decoration: none;
       cursor: pointer;
-      border: 1px solid transparent;
       background: transparent;
-      transition: all 0.15s ease;
+      border: none;
       width: 100%;
       text-align: left;
+      transition: all 0.12s;
     }
-    .nav-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.04);
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--surface-hover);
     }
-    .nav-btn.active {
-      color: #ffffff;
-      background: rgba(99, 102, 241, 0.15);
-      border-color: rgba(99, 102, 241, 0.3);
+    .nav-item.active {
+      color: var(--text);
+      background: var(--surface-hover);
       font-weight: 600;
-    }
-    .nav-btn svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-      color: inherit;
     }
 
     .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    /* Main Workspace */
-    .app-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: transparent;
-    }
-
-    /* Top Navbar */
-    .app-header {
-      height: 64px;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      flex-shrink: 0;
-    }
-
-    .header-title-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .view-title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: #ffffff;
-    }
-
-    .ist-clock-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 12px;
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      font-size: 12px;
-      color: var(--text-secondary);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    /* Workspace Content Area */
-    .app-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .content-container {
-      width: 100%;
-      max-width: 960px;
-    }
-
-    /* View Cards */
-    .panel-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 28px;
-      box-shadow: var(--shadow-md);
-      margin-bottom: 24px;
-      display: none;
-      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .panel-card.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .panel-header {
-      margin-bottom: 22px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 16px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-
-    .panel-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 4px;
-    }
-
-    .panel-header p {
-      font-size: 13.5px;
-      color: var(--text-secondary);
-    }
-
-    /* Form Grid */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    /* KPI Metrics Cards */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .kpi-card {
-      background: rgba(30, 41, 59, 0.45);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 16px;
+      padding: 14px 10px;
+      border-top: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .kpi-label {
-      font-size: 11.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
+    /* Main Area */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
     }
-
-    .kpi-value {
-      font-size: 26px;
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.02em;
-    }
-
-    /* Status Pills */
-    .badge {
-      display: inline-flex;
+    .topbar {
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 3px 9px;
-      border-radius: var(--radius-full);
-      font-size: 11.5px;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .topbar-title {
+      font-size: 15px;
       font-weight: 600;
-      text-transform: capitalize;
+    }
+    .ist-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
     }
 
-    .badge-present { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-late { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-absent { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .workspace {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 860px;
+    }
 
-    /* Tables */
-    .table-responsive {
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .card.active { display: block; }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Simple Metric Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Simple Table */
+    .table-wrap {
       width: 100%;
       overflow-x: auto;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      background: rgba(15, 23, 42, 0.4);
-      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-top: 14px;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
+      font-size: 13px;
     }
-
     th {
-      background: rgba(30, 41, 59, 0.6);
-      padding: 12px 16px;
+      background: var(--bg);
+      padding: 10px 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
       font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--border-subtle);
     }
-
     td {
-      padding: 13px 16px;
-      font-size: 13.5px;
-      color: var(--text-primary);
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
     }
-
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-    /* Toast Notification System */
-    #toast-container {
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    .badge-present { background: var(--green-bg); color: var(--green); }
+    .badge-late { background: var(--amber-bg); color: var(--amber); }
+    .badge-absent { background: var(--rose-bg); color: var(--rose); }
+
+    /* Minimal Toast */
+    #toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
+      bottom: 20px;
+      right: 20px;
+      background: #18191c;
+      border: 1px solid #2e3138;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 280px;
-      max-width: 420px;
-      padding: 14px 18px;
-      border-radius: var(--radius-sm);
-      background: #1e293b;
-      color: #ffffff;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-subtle);
-      font-size: 13.5px;
-      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      transition: all 0.2s ease;
-    }
-
-    .toast.success { border-left: 4px solid var(--success); }
-    .toast.error { border-left: 4px solid var(--danger); }
-    .toast.info { border-left: 4px solid var(--brand-primary); }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* API Inspector Slide Drawer */
+    /* API Inspector */
     #api-drawer {
       position: fixed;
       right: 0;
       top: 0;
       bottom: 0;
-      width: 460px;
-      background: #090d16;
-      border-left: 1px solid var(--border-subtle);
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
-      z-index: 1000;
+      width: 400px;
+      background: #0f1011;
+      border-left: 1px solid var(--border);
+      z-index: 900;
+      transform: translateX(100%);
+      transition: transform 0.2s ease;
       display: flex;
       flex-direction: column;
-      transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #api-drawer.open { transform: translateX(0); }
-
     .drawer-header {
-      padding: 18px 22px;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
     }
-
     .drawer-body {
       flex: 1;
-      padding: 20px;
+      padding: 14px;
       overflow-y: auto;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 11.5px;
     }
-
-    pre.code-block {
-      background: #0f172a;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      color: #38bdf8;
-      overflow-x: auto;
+    pre.code {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px;
+      color: #93c5fd;
       white-space: pre-wrap;
       word-break: break-all;
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
-    /* Responsive */
-    @media (max-width: 860px) {
-      .app-sidebar {
-        position: fixed;
-        left: -100%;
-        top: 0;
-        bottom: 0;
-        transition: left 0.3s ease;
-      }
-      .app-sidebar.open { left: 0; }
+    @media (max-width: 768px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      #api-drawer { width: 100vw; }
+      .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; z-index: 50; }
+      .sidebar.open { left: 0; }
     }
   </style>
 </head>
 <body>
-  <div class="ambient-glow"></div>
-  <div class="ambient-glow-2"></div>
 
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
+  <!-- Toast -->
+  <div id="toast"></div>
 
   <!-- AUTH SCREEN -->
-  <section id="auth-screen">
-    <div class="auth-card">
-      <div class="auth-brand-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        SkillBridge Core
-      </div>
+  <div id="auth-screen">
+    <div class="auth-box">
       <div class="auth-header">
-        <h1 id="auth-title">Welcome Back</h1>
-        <p id="auth-desc">Sign in to your SkillBridge account</p>
+        <div class="auth-brand">
+          <div class="brand-dot"></div>
+          <span>SkillBridge</span>
+        </div>
+        <h1 id="auth-title">Sign In</h1>
+        <p id="auth-desc">Enter your credentials to continue</p>
       </div>
 
-      <form id="auth-form" onsubmit="event.preventDefault(); submitAuth();">
+      <form onsubmit="event.preventDefault(); submitAuth();">
         <div id="signup-extra" class="hidden">
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" id="auth-name" class="form-control" placeholder="Jane Doe" />
+            <input type="text" id="auth-name" class="form-control" placeholder="Alex Taylor" />
           </div>
           <div class="form-group">
             <label>Role</label>
-            <select id="auth-role" class="form-control" onchange="checkRoleNeedsInstitution()">
+            <select id="auth-role" class="form-control" onchange="toggleInstitutionField()">
               <option value="student">Student</option>
               <option value="trainer">Trainer</option>
               <option value="institution">Institution Admin</option>
@@ -798,7 +545,7 @@
             </select>
           </div>
           <div class="form-group" id="group-inst-id">
-            <label>Institution ID <span style="font-size:11px; color:#94a3b8;">(1 = North, 2 = South)</span></label>
+            <label>Institution ID</label>
             <input type="number" id="auth-inst-id" class="form-control" placeholder="1" value="1" />
           </div>
         </div>
@@ -813,145 +560,108 @@
           <input type="password" id="auth-password" class="form-control" placeholder="••••••••••••" required />
         </div>
 
-        <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+        <button type="submit" id="auth-btn" class="btn btn-primary" style="width: 100%; margin-top: 4px;">
           Sign In
         </button>
 
-        <div style="margin-top: 14px; text-align: center; font-size: 13px; color: var(--text-secondary);">
+        <div style="margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--text-muted);">
           <span id="auth-toggle-text">Don't have an account?</span>
-          <a href="javascript:void(0)" onclick="toggleAuthMode()" id="auth-toggle-link" style="color: #818cf8; text-decoration: none; font-weight: 600; margin-left: 4px;">Sign Up</a>
+          <a href="javascript:void(0)" onclick="toggleAuthMode()" id="auth-toggle-link" style="color: var(--text); text-decoration: underline; margin-left: 4px;">Sign Up</a>
         </div>
       </form>
 
-      <!-- 1-Click Quick Demo Login Selector -->
-      <div class="quick-demo-box">
-        <div class="quick-demo-title">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          1-Click Demo Login
-        </div>
-        <div class="quick-chips">
-          <button class="chip-btn" onclick="quickFill('trainer')">👨‍🏫 Trainer</button>
-          <button class="chip-btn" onclick="quickFill('student')">🎓 Student</button>
-          <button class="chip-btn" onclick="quickFill('institution')">🏢 Institution</button>
-          <button class="chip-btn" onclick="quickFill('pm')">📊 Programme Mgr</button>
-          <button class="chip-btn" onclick="quickFill('monitor')">🕵️ Monitor</button>
+      <!-- Clean 1-Click Demo Selector -->
+      <div class="demo-selector">
+        <div class="demo-title">1-Click Test Accounts</div>
+        <div class="demo-chips">
+          <button class="chip" onclick="quickFill('trainer')">Trainer</button>
+          <button class="chip" onclick="quickFill('student')">Student</button>
+          <button class="chip" onclick="quickFill('institution')">Institution</button>
+          <button class="chip" onclick="quickFill('pm')">PM</button>
+          <button class="chip" onclick="quickFill('monitor')">Monitor</button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- MAIN APP CONTAINER -->
+  <!-- APPLICATION WORKSPACE -->
   <div id="app-container" class="hidden">
     
-    <!-- SIDEBAR -->
-    <aside class="app-sidebar" id="sidebar">
-      <div class="sidebar-top">
-        <a href="javascript:void(0)" class="logo-badge">
-          <div class="logo-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          </div>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="brand-dot"></div>
           <span>SkillBridge</span>
-        </a>
-        <span id="role-pill" class="badge" style="background:rgba(99,102,241,0.2); color:#a5b4fc;">Role</span>
-      </div>
-
-      <div class="sidebar-profile">
-        <div class="avatar-circle" id="user-avatar">SB</div>
-        <div class="profile-info">
-          <div class="profile-role" id="user-role-label">TRAINER</div>
-          <div class="profile-name" id="user-name-label">user@skillbridge.com</div>
         </div>
+        <span id="sidebar-role-badge" class="role-badge">Trainer</span>
       </div>
 
       <nav class="sidebar-nav" id="sidebar-nav">
-        <!-- Dynamically rendered per active role -->
+        <!-- Injected via JavaScript based on role -->
       </nav>
 
       <div class="sidebar-footer">
-        <button class="btn btn-secondary btn-sm" onclick="toggleApiDrawer()" style="width: 100%;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          API Console
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="handleLogout()" style="width: 100%; color: #f87171;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Sign Out
-        </button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleApiDrawer()" style="width: 100%;">API Console</button>
+        <button class="btn btn-secondary btn-sm" onclick="handleLogout()" style="width: 100%; color: #f87171;">Sign Out</button>
       </div>
     </aside>
 
-    <!-- MAIN WORKSPACE -->
-    <main class="app-main">
-      <header class="app-header">
-        <div class="header-title-area">
-          <button class="btn btn-secondary btn-sm d-md-none" onclick="toggleMobileSidebar()">☰</button>
-          <div class="view-title" id="page-header-title">Dashboard</div>
-        </div>
-
+    <!-- Main Workspace Area -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title" id="page-title">Dashboard</div>
         <div class="flex items-center gap-3">
-          <div class="ist-clock-pill">
-            <span class="pulse-dot"></span>
-            <span id="ist-clock">Loading IST...</span>
+          <div class="ist-time">
+            <span class="status-dot"></span>
+            <span id="ist-time-text">--:--:-- IST</span>
           </div>
-          <button class="btn btn-outline-brand btn-sm" onclick="toggleApiDrawer()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            API Logs
-          </button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleApiDrawer()">Logs</button>
         </div>
       </header>
 
-      <div class="app-content">
-        <div class="content-container">
+      <div class="workspace">
+        <div class="container">
 
-          <!-- ================= TRAINER VIEWS ================= -->
-          <!-- Create Batch -->
-          <div id="view-trainer-batch" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Create Training Batch</h2>
-                <p>Register a new student batch linked to your assigned institution</p>
-              </div>
-            </div>
+          <!-- TRAINER: Create Batch -->
+          <div id="view-tr-batch" class="card">
+            <div class="card-title">Create Batch</div>
+            <div class="card-desc">Create a new batch linked to your assigned institution.</div>
             <div class="form-group">
               <label>Batch Name</label>
-              <input type="text" id="tr-batch-name" class="form-control" placeholder="e.g. Fullstack Web Bootcamp 2026" />
+              <input type="text" id="tr-batch-name" class="form-control" placeholder="e.g. Python Engineering Batch 1" />
             </div>
             <button class="btn btn-primary" onclick="createBatchTrainer()">Create Batch</button>
           </div>
 
-          <!-- Batch Invites -->
-          <div id="view-trainer-invite" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Generate Batch Invite Token</h2>
-                <p>Generate a secure, single-use enrollment token for students</p>
-              </div>
-            </div>
+          <!-- TRAINER: Invites -->
+          <div id="view-tr-invite" class="card">
+            <div class="card-title">Generate Invite Token</div>
+            <div class="card-desc">Create a secure single-use token to enroll students.</div>
             <div class="grid-2">
               <div class="form-group">
                 <label>Batch ID</label>
-                <input type="number" id="tr-invite-bid" class="form-control" placeholder="e.g. 1" />
+                <input type="number" id="tr-invite-bid" class="form-control" placeholder="1" />
               </div>
               <div class="form-group">
                 <label>Expires In (Hours)</label>
-                <input type="number" id="tr-invite-hours" class="form-control" value="24" min="1" max="168" />
+                <input type="number" id="tr-invite-hours" class="form-control" value="24" />
               </div>
             </div>
-            <button class="btn btn-primary" onclick="generateBatchInvite()">Generate Token</button>
-            <div id="invite-result-box" class="hidden" style="margin-top: 18px; padding: 14px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: space-between;">
-              <span id="invite-token-text" style="font-family: monospace; font-size: 14px; color: #a5b4fc;"></span>
-              <button class="btn btn-secondary btn-sm" onclick="copyInviteToken()">Copy Token</button>
+            <button class="btn btn-primary" onclick="generateInvite()">Generate Token</button>
+            <div id="invite-token-display" class="hidden" style="margin-top: 14px; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+              <span id="invite-token-val" style="font-family: monospace; font-size: 13px;"></span>
+              <button class="btn btn-secondary btn-sm" onclick="copyToken()">Copy</button>
             </div>
           </div>
 
-          <!-- Schedule Session -->
-          <div id="view-trainer-session" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Schedule Training Session</h2>
-                <p>Schedule a live classroom session with an active attendance window</p>
-              </div>
-              <button class="btn btn-outline-brand btn-sm" onclick="fillLiveSessionTimes()">Fill Live Window (Now ± 1hr)</button>
+          <!-- TRAINER: Schedule Session -->
+          <div id="view-tr-session" class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: 4px;">
+              <div class="card-title" style="margin-bottom:0;">Schedule Session</div>
+              <button class="btn btn-secondary btn-sm" onclick="fillCurrentTimeHelper()">Set Active Now (±1h)</button>
             </div>
+            <div class="card-desc">Set date and time window for students to mark attendance.</div>
             <div class="grid-2">
               <div class="form-group">
                 <label>Batch ID</label>
@@ -959,12 +669,12 @@
               </div>
               <div class="form-group">
                 <label>Session Title</label>
-                <input type="text" id="tr-sess-title" class="form-control" placeholder="Python Advanced Decorators" />
+                <input type="text" id="tr-sess-title" class="form-control" placeholder="Data Structures & Algorithms" />
               </div>
             </div>
             <div class="grid-3">
               <div class="form-group">
-                <label>Session Date</label>
+                <label>Date</label>
                 <input type="date" id="tr-sess-date" class="form-control" />
               </div>
               <div class="form-group">
@@ -976,250 +686,143 @@
                 <input type="time" step="1" id="tr-sess-end" class="form-control" />
               </div>
             </div>
-            <button class="btn btn-primary" onclick="scheduleSession()">Schedule Session</button>
+            <button class="btn btn-primary" onclick="scheduleSession()">Create Session</button>
           </div>
 
-          <!-- Session Attendance -->
-          <div id="view-trainer-attendance" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Session Attendance Roster</h2>
-                <p>View real-time attendance logs for sessions conducted by you</p>
-              </div>
+          <!-- TRAINER: Attendance Roster -->
+          <div id="view-tr-roster" class="card">
+            <div class="card-title">Session Attendance</div>
+            <div class="card-desc">Check student attendance marks for your sessions.</div>
+            <div class="flex gap-2" style="margin-bottom: 14px;">
+              <input type="number" id="tr-roster-sid" class="form-control" placeholder="Session ID (e.g. 1)" style="max-width: 240px;" />
+              <button class="btn btn-primary" onclick="loadSessionAttendance()">Load</button>
             </div>
-            <div class="flex gap-2" style="margin-bottom: 16px;">
-              <input type="number" id="tr-att-sid" class="form-control" placeholder="Enter Session ID (e.g. 1, 2, 3)" style="max-width: 320px;" />
-              <button class="btn btn-primary" onclick="loadSessionAttendance()">Load Records</button>
-            </div>
-            <div id="tr-att-table-wrap" class="hidden table-responsive">
+            <div id="tr-roster-table-wrap" class="hidden table-wrap">
               <table>
                 <thead>
                   <tr>
                     <th>Student ID</th>
-                    <th>Full Name</th>
+                    <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
                     <th>Marked At</th>
                   </tr>
                 </thead>
-                <tbody id="tr-att-tbody"></tbody>
+                <tbody id="tr-roster-tbody"></tbody>
               </table>
             </div>
           </div>
 
-          <!-- ================= STUDENT VIEWS ================= -->
-          <!-- Join Batch -->
-          <div id="view-student-join" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Enroll in a Batch</h2>
-                <p>Paste the secure single-use invite token received from your trainer</p>
-              </div>
-            </div>
+          <!-- STUDENT: Join Batch -->
+          <div id="view-st-join" class="card">
+            <div class="card-title">Join a Batch</div>
+            <div class="card-desc">Enter the invite token provided by your trainer.</div>
             <div class="form-group">
-              <label>Invite Token</label>
-              <input type="text" id="st-join-token" class="form-control" placeholder="Paste invite token here..." />
+              <label>Token</label>
+              <input type="text" id="st-join-token" class="form-control" placeholder="Paste token here..." />
             </div>
-            <button class="btn btn-primary" onclick="joinBatchStudent()">Join Batch</button>
+            <button class="btn btn-primary" onclick="joinBatch()">Join Batch</button>
           </div>
 
-          <!-- Mark Attendance -->
-          <div id="view-student-attendance" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Mark Session Attendance</h2>
-                <p>Record your attendance during the active IST session window</p>
-              </div>
-            </div>
+          <!-- STUDENT: Mark Attendance -->
+          <div id="view-st-mark" class="card">
+            <div class="card-title">Mark Attendance</div>
+            <div class="card-desc">Mark yourself present, late, or absent during the active session.</div>
             <div class="grid-2">
               <div class="form-group">
-                <label>Active Session ID</label>
-                <input type="number" id="st-att-sid" class="form-control" placeholder="e.g. 1" />
+                <label>Session ID</label>
+                <input type="number" id="st-mark-sid" class="form-control" placeholder="1" />
               </div>
               <div class="form-group">
-                <label>Your Attendance Status</label>
-                <select id="st-att-status" class="form-control">
+                <label>Status</label>
+                <select id="st-mark-status" class="form-control">
                   <option value="present">Present</option>
                   <option value="late">Late</option>
                   <option value="absent">Absent</option>
                 </select>
               </div>
             </div>
-            <button class="btn btn-primary" onclick="markAttendanceStudent()">Submit Attendance</button>
+            <button class="btn btn-primary" onclick="markAttendance()">Submit Attendance</button>
           </div>
 
-          <!-- ================= INSTITUTION VIEWS ================= -->
-          <!-- Institution Create Batch -->
-          <div id="view-inst-batch" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Create Institutional Batch</h2>
-                <p>Add a new cohort under your institution</p>
-              </div>
+          <!-- INSTITUTION: Batch Summary -->
+          <div id="view-inst-summary" class="card">
+            <div class="card-title">Batch Summary</div>
+            <div class="card-desc">View aggregated attendance metrics across sessions.</div>
+            <div class="flex gap-2" style="margin-bottom: 14px;">
+              <input type="number" id="inst-bid-input" class="form-control" placeholder="Batch ID (e.g. 1)" style="max-width: 240px;" />
+              <button class="btn btn-primary" onclick="loadBatchSummary()">View Report</button>
             </div>
-            <div class="form-group">
-              <label>Batch Name</label>
-              <input type="text" id="inst-batch-name" class="form-control" placeholder="e.g. Data Analytics Cohort A" />
-            </div>
-            <button class="btn btn-primary" onclick="createBatchInstitution()">Create Cohort</button>
-          </div>
-
-          <!-- Batch Summary -->
-          <div id="view-inst-summary" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Batch Analytics Summary</h2>
-                <p>Aggregated metrics across sessions and student attendances</p>
-              </div>
-            </div>
-            <div class="flex gap-2" style="margin-bottom: 20px;">
-              <input type="number" id="inst-sum-bid" class="form-control" placeholder="Enter Batch ID (e.g. 1)" style="max-width: 300px;" />
-              <button class="btn btn-primary" onclick="loadBatchSummary()">Fetch Summary</button>
-            </div>
-            <div id="inst-sum-stats" class="hidden">
-              <h3 id="inst-sum-title" style="margin-bottom: 12px; color: #a5b4fc; font-size: 16px;"></h3>
-              <div class="kpi-grid">
-                <div class="kpi-card">
-                  <span class="kpi-label">Total Sessions</span>
-                  <span class="kpi-value" id="kpi-b-sessions">0</span>
+            <div id="inst-summary-stats" class="hidden">
+              <div class="stats">
+                <div class="stat-box">
+                  <div class="stat-label">Total Sessions</div>
+                  <div class="stat-value" id="stat-b-sessions">0</div>
                 </div>
-                <div class="kpi-card">
-                  <span class="kpi-label">Present</span>
-                  <span class="kpi-value" id="kpi-b-present" style="color: var(--success);">0</span>
+                <div class="stat-box">
+                  <div class="stat-label">Present</div>
+                  <div class="stat-value" id="stat-b-present" style="color: var(--green);">0</div>
                 </div>
-                <div class="kpi-card">
-                  <span class="kpi-label">Late</span>
-                  <span class="kpi-value" id="kpi-b-late" style="color: var(--warning);">0</span>
+                <div class="stat-box">
+                  <div class="stat-label">Late</div>
+                  <div class="stat-value" id="stat-b-late" style="color: var(--amber);">0</div>
                 </div>
-                <div class="kpi-card">
-                  <span class="kpi-label">Absent</span>
-                  <span class="kpi-value" id="kpi-b-absent" style="color: var(--danger);">0</span>
+                <div class="stat-box">
+                  <div class="stat-label">Absent</div>
+                  <div class="stat-value" id="stat-b-absent" style="color: var(--rose);">0</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ================= PROGRAMME MANAGER VIEWS ================= -->
-          <!-- Global Summary -->
-          <div id="view-pm-global" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Global Programme Analytics</h2>
-                <p>System-wide telemetry across all partner institutions and batches</p>
-              </div>
-              <button class="btn btn-secondary btn-sm" onclick="loadProgrammeGlobal()">Refresh</button>
+          <!-- PROGRAMME MANAGER: Global Overview -->
+          <div id="view-pm-overview" class="card">
+            <div class="flex items-center justify-between" style="margin-bottom: 4px;">
+              <div class="card-title" style="margin-bottom:0;">Programme Telemetry</div>
+              <button class="btn btn-secondary btn-sm" onclick="loadProgrammeOverview()">Refresh</button>
             </div>
-            <div class="kpi-grid">
-              <div class="kpi-card">
-                <span class="kpi-label">Institutions</span>
-                <span class="kpi-value" id="pm-g-inst">0</span>
+            <div class="card-desc">Platform-wide counts across all partner institutions.</div>
+            <div class="stats">
+              <div class="stat-box">
+                <div class="stat-label">Institutions</div>
+                <div class="stat-value" id="pm-stat-inst">0</div>
               </div>
-              <div class="kpi-card">
-                <span class="kpi-label">Batches</span>
-                <span class="kpi-value" id="pm-g-batch">0</span>
+              <div class="stat-box">
+                <div class="stat-label">Batches</div>
+                <div class="stat-value" id="pm-stat-batches">0</div>
               </div>
-              <div class="kpi-card">
-                <span class="kpi-label">Students</span>
-                <span class="kpi-value" id="pm-g-students">0</span>
+              <div class="stat-box">
+                <div class="stat-label">Students</div>
+                <div class="stat-value" id="pm-stat-students">0</div>
               </div>
-              <div class="kpi-card">
-                <span class="kpi-label">Sessions</span>
-                <span class="kpi-value" id="pm-g-sessions">0</span>
-              </div>
-              <div class="kpi-card">
-                <span class="kpi-label">Presents</span>
-                <span class="kpi-value" id="pm-g-present" style="color: var(--success);">0</span>
+              <div class="stat-box">
+                <div class="stat-label">Sessions</div>
+                <div class="stat-value" id="pm-stat-sessions">0</div>
               </div>
             </div>
           </div>
 
-          <!-- Institution View PM -->
-          <div id="view-pm-inst" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Institution Report</h2>
-                <p>Breakdown of batches, sessions, and students for a specific institute</p>
-              </div>
+          <!-- MONITORING: Scoped Auth & Feed -->
+          <div id="view-mon-feed" class="card">
+            <div class="card-title">Live Telemetry Feed</div>
+            <div class="card-desc">Requires secret API key to authorize scoped monitoring access.</div>
+            <div class="flex gap-2" style="margin-bottom: 14px;">
+              <input type="password" id="mon-key-input" class="form-control" placeholder="API Key (default: monitoring-dev-key)" style="max-width: 320px;" value="monitoring-dev-key" />
+              <button class="btn btn-primary" onclick="authorizeMonitoringToken()">Authorize & Fetch</button>
             </div>
-            <div class="flex gap-2" style="margin-bottom: 20px;">
-              <input type="number" id="pm-inst-id-input" class="form-control" placeholder="Institution ID (e.g. 1)" style="max-width: 300px;" />
-              <button class="btn btn-primary" onclick="loadInstitutionSummaryPM()">Load Report</button>
-            </div>
-            <div id="pm-inst-stats" class="hidden">
-              <h3 id="pm-inst-title" style="margin-bottom: 12px; color: #a5b4fc; font-size: 16px;"></h3>
-              <div class="kpi-grid">
-                <div class="kpi-card">
-                  <span class="kpi-label">Batches</span>
-                  <span class="kpi-value" id="kpi-i-batches">0</span>
-                </div>
-                <div class="kpi-card">
-                  <span class="kpi-label">Sessions</span>
-                  <span class="kpi-value" id="kpi-i-sessions">0</span>
-                </div>
-                <div class="kpi-card">
-                  <span class="kpi-label">Students</span>
-                  <span class="kpi-value" id="kpi-i-students">0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Create Institution PM -->
-          <div id="view-pm-create-inst" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Register New Institution</h2>
-                <p>Add a new vocational partner institute to the platform</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Institution Name</label>
-              <input type="text" id="pm-new-inst-name" class="form-control" placeholder="e.g. SkillBridge Central Institute" />
-            </div>
-            <button class="btn btn-primary" onclick="createInstitutionPM()">Register Institute</button>
-          </div>
-
-          <!-- ================= MONITORING OFFICER VIEWS ================= -->
-          <!-- Authorize Key -->
-          <div id="view-mon-auth" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Authorize Monitoring Access</h2>
-                <p>Exchange your secret system key for a short-lived scoped telemetry token</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Monitoring Secret Key</label>
-              <input type="password" id="mon-secret-key" class="form-control" placeholder="Enter key (default: monitoring-dev-key)" />
-            </div>
-            <div class="flex gap-2">
-              <button class="btn btn-primary" onclick="authorizeMonitoringToken()">Exchange Key for Scoped Token</button>
-              <button class="btn btn-secondary" onclick="document.getElementById('mon-secret-key').value='monitoring-dev-key'">Fill Default Key</button>
-            </div>
-          </div>
-
-          <!-- Live Feed -->
-          <div id="view-mon-feed" class="panel-card">
-            <div class="panel-header">
-              <div>
-                <h2>Live Attendance Feed</h2>
-                <p>Global real-time attendance events stream (Requires Scoped Token)</p>
-              </div>
-              <button class="btn btn-secondary btn-sm" onclick="loadMonitoringFeed()">Refresh Feed</button>
-            </div>
-            <div id="mon-feed-wrap" class="table-responsive">
+            <div class="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Log ID</th>
+                    <th>Log #</th>
                     <th>Session</th>
                     <th>Student</th>
                     <th>Status</th>
                     <th>Timestamp</th>
                   </tr>
                 </thead>
-                <tbody id="mon-feed-tbody">
-                  <tr><td colspan="5" style="text-align:center; color:#64748b;">No records loaded yet. Click 'Refresh Feed' above.</td></tr>
+                <tbody id="mon-tbody">
+                  <tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Click Authorize & Fetch above to load telemetry feed.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1230,34 +833,22 @@
     </main>
   </div>
 
-  <!-- API INSPECTOR SLIDE DRAWER -->
+  <!-- Minimal API Drawer -->
   <aside id="api-drawer">
     <div class="drawer-header">
-      <div class="flex items-center gap-2">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        <strong style="font-size: 14px;">Live API Inspector</strong>
-      </div>
-      <button class="btn btn-secondary btn-sm" onclick="toggleApiDrawer()">✕ Close</button>
+      <span>API Request Inspector</span>
+      <button class="btn btn-secondary btn-sm" onclick="toggleApiDrawer()">Close</button>
     </div>
-    <div class="drawer-body">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-        <span style="color: #94a3b8;">Recent HTTP Log</span>
-        <button class="btn btn-secondary btn-sm" onclick="clearApiLogs()" style="font-size:10px; padding:2px 8px;">Clear</button>
-      </div>
-      <div id="api-logs-container">
-        <div style="color: #64748b; padding: 20px 0; text-align: center;">Execute any action to inspect HTTP requests, headers, and responses in real-time.</div>
-      </div>
+    <div class="drawer-body" id="api-logs">
+      <div style="color: var(--text-dim); text-align: center; padding: 20px 0;">No requests recorded yet.</div>
     </div>
   </aside>
 
   <script>
-    const API_BASE = "";
-    let accessToken = sessionStorage.getItem("sb_access_token") || "";
-    let monitoringToken = sessionStorage.getItem("sb_mon_token") || "";
-    let currentUser = null;
+    let accessToken = sessionStorage.getItem("sb_token") || "";
+    let monToken = sessionStorage.getItem("sb_mon_token") || "";
     let isSignupMode = false;
 
-    // Pre-configured demo credentials
     const demoAccounts = {
       trainer: { email: "trainer1@skillbridgeapp.com", pass: "SkillBridge123!" },
       student: { email: "student1@skillbridgeapp.com", pass: "SkillBridge123!" },
@@ -1266,34 +857,29 @@
       monitor: { email: "monitor@skillbridgeapp.com", pass: "SkillBridge123!" }
     };
 
-    // Navigation Menu Structure per role
-    const roleNavMenus = {
+    const navConfig = {
       trainer: [
-        { id: "view-trainer-batch", label: "Create Batch", icon: `<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>` },
-        { id: "view-trainer-invite", label: "Batch Invites", icon: `<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line>` },
-        { id: "view-trainer-session", label: "Schedule Session", icon: `<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>` },
-        { id: "view-trainer-attendance", label: "Session Attendance", icon: `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>` }
+        { id: "view-tr-batch", label: "Create Batch" },
+        { id: "view-tr-invite", label: "Invite Token" },
+        { id: "view-tr-session", label: "Schedule Session" },
+        { id: "view-tr-roster", label: "Attendance Roster" }
       ],
       student: [
-        { id: "view-student-join", label: "Join Batch", icon: `<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line>` },
-        { id: "view-student-attendance", label: "Mark Attendance", icon: `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>` }
+        { id: "view-st-join", label: "Join Batch" },
+        { id: "view-st-mark", label: "Mark Attendance" }
       ],
       institution: [
-        { id: "view-inst-batch", label: "Create Cohort", icon: `<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>` },
-        { id: "view-inst-summary", label: "Batch Summary", icon: `<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>` }
+        { id: "view-tr-batch", label: "Create Batch" },
+        { id: "view-inst-summary", label: "Batch Summary" }
       ],
       programme_manager: [
-        { id: "view-pm-global", label: "Global Overview", icon: `<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>` },
-        { id: "view-pm-inst", label: "Institution Report", icon: `<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>` },
-        { id: "view-pm-create-inst", label: "Register Institute", icon: `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line>` }
+        { id: "view-pm-overview", label: "Global Telemetry" }
       ],
       monitoring_officer: [
-        { id: "view-mon-auth", label: "Authorize Scoped Key", icon: `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>` },
-        { id: "view-mon-feed", label: "Live Telemetry Feed", icon: `<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>` }
+        { id: "view-mon-feed", label: "Live Telemetry Feed" }
       ]
     };
 
-    // Parse JWT Payload
     function parseJwt(token) {
       try {
         const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -1303,129 +889,77 @@
       }
     }
 
-    // Modern Toast
-    function showToast(msg, type = "info") {
-      const container = document.getElementById("toast-container");
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `<span>${msg}</span>`;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(10px)";
-        setTimeout(() => toast.remove(), 200);
-      }, 4000);
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 3500);
     }
 
-    // Core HTTP caller with API Inspector Logging
-    async function apiCall(endpoint, method = "GET", body = null, useMonitoringToken = false) {
-      const token = useMonitoringToken ? monitoringToken : accessToken;
+    async function apiCall(endpoint, method = "GET", body = null, useMon = false) {
+      const token = useMon ? monToken : accessToken;
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const logEntry = {
-        timestamp: new Date().toLocaleTimeString(),
-        method,
-        endpoint,
-        requestBody: body
-      };
-
       try {
-        const res = await fetch(API_BASE + endpoint, {
+        const res = await fetch(endpoint, {
           method,
           headers,
           body: body ? JSON.stringify(body) : null
         });
         const data = await res.json().catch(() => ({}));
-        logEntry.status = res.status;
-        logEntry.response = data;
-        appendApiLog(logEntry);
+        logApi(method, endpoint, res.status, data);
         return { status: res.status, data };
       } catch (err) {
-        logEntry.status = "ERR";
-        logEntry.response = err.message;
-        appendApiLog(logEntry);
+        logApi(method, endpoint, "ERR", { error: err.message });
         return { status: 500, data: { detail: err.message } };
       }
     }
 
-    function appendApiLog(entry) {
-      const container = document.getElementById("api-logs-container");
-      if (container.children.length > 20) container.lastElementChild.remove();
-      
-      const statusColor = entry.status === 200 ? "#10b981" : entry.status === 401 || entry.status === 403 ? "#f59e0b" : "#ef4444";
+    function logApi(method, endpoint, status, data) {
+      const c = document.getElementById("api-logs");
+      if (c.children.length > 15) c.lastElementChild.remove();
       const div = document.createElement("div");
-      div.style.marginBottom = "14px";
-      div.style.borderBottom = "1px solid rgba(255,255,255,0.06)";
-      div.style.paddingBottom = "10px";
+      div.style.marginBottom = "12px";
+      div.style.paddingBottom = "8px";
+      div.style.borderBottom = "1px solid var(--border)";
       div.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span style="font-weight:700; color:#ffffff;"><span style="color:#a5b4fc;">${entry.method}</span> ${entry.endpoint}</span>
-          <span style="color:${statusColor}; font-weight:700;">${entry.status}</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+          <span><strong>${method}</strong> ${endpoint}</span>
+          <span style="color:${status === 200 ? 'var(--green)' : 'var(--amber)'};">${status}</span>
         </div>
-        <div style="font-size:11px; color:#64748b; margin-bottom:4px;">${entry.timestamp}</div>
-        <pre class="code-block">${JSON.stringify(entry.response, null, 2)}</pre>
+        <pre class="code">${JSON.stringify(data, null, 2)}</pre>
       `;
-      container.prepend(div);
-    }
-
-    function clearApiLogs() {
-      document.getElementById("api-logs-container").innerHTML = '<div style="color: #64748b; padding: 20px 0; text-align: center;">Logs cleared.</div>';
+      c.prepend(div);
     }
 
     function toggleApiDrawer() {
       document.getElementById("api-drawer").classList.toggle("open");
     }
 
-    function toggleMobileSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
-    }
-
-    // 1-Click Quick Fill
-    function quickFill(roleKey) {
-      const acc = demoAccounts[roleKey];
+    function quickFill(role) {
+      const acc = demoAccounts[role];
       if (!acc) return;
       document.getElementById("auth-email").value = acc.email;
       document.getElementById("auth-password").value = acc.pass;
-      showToast(`Prefilled credentials for ${roleKey.toUpperCase()}`, "info");
       submitAuth();
     }
 
-    // Switch view
-    function switchView(viewId, title) {
-      document.querySelectorAll(".panel-card").forEach(c => c.classList.remove("active"));
-      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-      
-      const target = document.getElementById(viewId);
-      const targetNav = document.getElementById(`nav-${viewId}`);
-      if (target) target.classList.add("active");
-      if (targetNav) targetNav.classList.add("active");
-      document.getElementById("page-header-title").textContent = title;
-      
-      if (window.innerWidth < 860) {
-        document.getElementById("sidebar").classList.remove("open");
-      }
+    function toggleAuthMode() {
+      isSignupMode = !isSignupMode;
+      document.getElementById("signup-extra").classList.toggle("hidden", !isSignupMode);
+      document.getElementById("auth-title").textContent = isSignupMode ? "Create Account" : "Sign In";
+      document.getElementById("auth-desc").textContent = isSignupMode ? "Enter details to create an account" : "Enter your credentials to continue";
+      document.getElementById("auth-btn").textContent = isSignupMode ? "Sign Up" : "Sign In";
+      document.getElementById("auth-toggle-text").textContent = isSignupMode ? "Already have an account?" : "Don't have an account?";
+      document.getElementById("auth-toggle-link").textContent = isSignupMode ? "Sign In" : "Sign Up";
     }
 
-    // Build Navigation
-    function buildNavigation(role) {
-      const navContainer = document.getElementById("sidebar-nav");
-      navContainer.innerHTML = `<div class="nav-category">${role.replace("_", " ")} Workspace</div>`;
-      const menu = roleNavMenus[role] || [];
-      menu.forEach(item => {
-        const btn = document.createElement("button");
-        btn.className = "nav-btn";
-        btn.id = `nav-${item.id}`;
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${item.icon}</svg><span>${item.label}</span>`;
-        btn.onclick = () => switchView(item.id, item.label);
-        navContainer.appendChild(btn);
-      });
-      if (menu.length > 0) {
-        switchView(menu[0].id, menu[0].label);
-      }
+    function toggleInstitutionField() {
+      const role = document.getElementById("auth-role").value;
+      document.getElementById("group-inst-id").classList.toggle("hidden", !["student", "trainer", "institution"].includes(role));
     }
 
-    // Auth Submission
     async function submitAuth() {
       const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
@@ -1434,128 +968,119 @@
         const { status, data } = await apiCall("/auth/login", "POST", { email, password });
         if (status === 200 && data.access_token) {
           accessToken = data.access_token;
-          sessionStorage.setItem("sb_access_token", accessToken);
-          initSession();
-          showToast("Welcome back! Signed in successfully.", "success");
+          sessionStorage.setItem("sb_token", accessToken);
+          initApp();
+          showToast("Signed in successfully.");
         } else {
-          showToast(data.detail || "Authentication failed. Check credentials.", "error");
+          showToast(data.detail || "Authentication failed.");
         }
       } else {
         const name = document.getElementById("auth-name").value.trim();
         const role = document.getElementById("auth-role").value;
-        const instIdVal = document.getElementById("auth-inst-id").value;
-        const institution_id = instIdVal ? Number(instIdVal) : null;
-
+        const instId = document.getElementById("auth-inst-id").value;
         const payload = { name, email, password, role };
-        if (["student", "trainer", "institution"].includes(role)) {
-          payload.institution_id = institution_id;
-        }
+        if (["student", "trainer", "institution"].includes(role)) payload.institution_id = Number(instId);
 
         const { status, data } = await apiCall("/auth/signup", "POST", payload);
         if (status === 200 && data.access_token) {
           accessToken = data.access_token;
-          sessionStorage.setItem("sb_access_token", accessToken);
-          initSession();
-          showToast("Account created successfully!", "success");
+          sessionStorage.setItem("sb_token", accessToken);
+          initApp();
+          showToast("Account created.");
         } else {
-          showToast(data.detail || "Signup failed. Review inputs.", "error");
+          showToast(data.detail || "Signup error.");
         }
       }
     }
 
-    function toggleAuthMode() {
-      isSignupMode = !isSignupMode;
-      document.getElementById("signup-extra").classList.toggle("hidden", !isSignupMode);
-      document.getElementById("auth-title").textContent = isSignupMode ? "Create Account" : "Welcome Back";
-      document.getElementById("auth-desc").textContent = isSignupMode ? "Register to access the SkillBridge platform" : "Sign in to your SkillBridge account";
-      document.getElementById("auth-submit-btn").textContent = isSignupMode ? "Sign Up" : "Sign In";
-      document.getElementById("auth-toggle-text").textContent = isSignupMode ? "Already have an account?" : "Don't have an account?";
-      document.getElementById("auth-toggle-link").textContent = isSignupMode ? "Sign In" : "Sign Up";
-    }
-
-    function checkRoleNeedsInstitution() {
-      const role = document.getElementById("auth-role").value;
-      const group = document.getElementById("group-inst-id");
-      group.classList.toggle("hidden", !["student", "trainer", "institution"].includes(role));
-    }
-
     function handleLogout() {
       accessToken = "";
-      monitoringToken = "";
-      currentUser = null;
+      monToken = "";
       sessionStorage.clear();
       document.getElementById("app-container").classList.add("hidden");
       document.getElementById("auth-screen").classList.remove("hidden");
-      showToast("Signed out successfully.", "info");
+      showToast("Signed out.");
     }
 
-    function initSession() {
+    function switchTab(viewId, title) {
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+
+      const target = document.getElementById(viewId);
+      const targetNav = document.getElementById(`nav-${viewId}`);
+      if (target) target.classList.add("active");
+      if (targetNav) targetNav.classList.add("active");
+      document.getElementById("page-title").textContent = title;
+    }
+
+    function initApp() {
       if (!accessToken) return;
-      const payload = parseJwt(accessToken);
-      if (!payload || payload.exp * 1000 < Date.now()) {
+      const user = parseJwt(accessToken);
+      if (!user || user.exp * 1000 < Date.now()) {
         handleLogout();
         return;
       }
 
-      currentUser = payload;
-      const roleName = payload.role || "unknown";
-      document.getElementById("user-role-label").textContent = roleName.replace("_", " ").toUpperCase();
-      document.getElementById("role-pill").textContent = roleName.replace("_", " ");
-      document.getElementById("user-avatar").textContent = roleName.substring(0, 2).toUpperCase();
-
+      const role = user.role || "unknown";
+      document.getElementById("sidebar-role-badge").textContent = role.replace("_", " ");
       document.getElementById("auth-screen").classList.add("hidden");
       document.getElementById("app-container").classList.remove("hidden");
 
-      buildNavigation(roleName);
-      if (roleName === "programme_manager") loadProgrammeGlobal();
+      const nav = document.getElementById("sidebar-nav");
+      nav.innerHTML = `<div class="nav-label">Navigation</div>`;
+      const items = navConfig[role] || [];
+      items.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "nav-item";
+        btn.id = `nav-${item.id}`;
+        btn.textContent = item.label;
+        btn.onclick = () => switchTab(item.id, item.label);
+        nav.appendChild(btn);
+      });
+
+      if (items.length > 0) switchTab(items[0].id, items[0].label);
+      if (role === "programme_manager") loadProgrammeOverview();
     }
 
-    // Helper: Fill Live Window Times
-    function fillLiveSessionTimes() {
+    // Actions
+    function fillCurrentTimeHelper() {
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
       document.getElementById("tr-sess-date").value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-      
-      const start = new Date(now.getTime() - 10 * 60000);
-      const end = new Date(now.getTime() + 50 * 60000);
-      document.getElementById("tr-sess-start").value = `${pad(start.getHours())}:${pad(start.getMinutes())}:${pad(start.getSeconds())}`;
-      document.getElementById("tr-sess-end").value = `${pad(end.getHours())}:${pad(end.getMinutes())}:${pad(end.getSeconds())}`;
-      showToast("Filled live session times (active right now in IST)", "info");
+      const s = new Date(now.getTime() - 10 * 60000);
+      const e = new Date(now.getTime() + 50 * 60000);
+      document.getElementById("tr-sess-start").value = `${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`;
+      document.getElementById("tr-sess-end").value = `${pad(e.getHours())}:${pad(e.getMinutes())}:${pad(e.getSeconds())}`;
+      showToast("Time set to active session window.");
     }
 
-    // Trainer API Actions
     async function createBatchTrainer() {
       const name = document.getElementById("tr-batch-name").value.trim();
-      if (!name) return showToast("Please enter a batch name", "error");
+      if (!name) return showToast("Enter batch name.");
       const { status, data } = await apiCall("/batches", "POST", { name });
-      if (status === 200) {
-        showToast(data.message, "success");
-        document.getElementById("tr-batch-name").value = "";
-      } else {
-        showToast(data.detail || "Failed to create batch", "error");
-      }
+      showToast(data.message || data.detail);
+      if (status === 200) document.getElementById("tr-batch-name").value = "";
     }
 
-    async function generateBatchInvite() {
-      const bId = document.getElementById("tr-invite-bid").value.trim();
+    async function generateInvite() {
+      const bid = document.getElementById("tr-invite-bid").value;
       const hours = Number(document.getElementById("tr-invite-hours").value || 24);
-      if (!bId) return showToast("Enter a batch ID", "error");
-
-      const { status, data } = await apiCall(`/batches/${bId}/invite`, "POST", { expires_in_hours: hours });
+      if (!bid) return showToast("Enter batch ID.");
+      const { status, data } = await apiCall(`/batches/${bid}/invite`, "POST", { expires_in_hours: hours });
       if (status === 200 && data.message) {
         const token = data.message.split(": ")[1] || data.message;
-        document.getElementById("invite-result-box").classList.remove("hidden");
-        document.getElementById("invite-token-text").textContent = token;
-        showToast("Invite token generated!", "success");
+        document.getElementById("invite-token-display").classList.remove("hidden");
+        document.getElementById("invite-token-val").textContent = token;
+        showToast("Invite token generated.");
       } else {
-        showToast(data.detail || "Failed to generate invite", "error");
+        showToast(data.detail || "Error generating invite.");
       }
     }
 
-    function copyInviteToken() {
-      const token = document.getElementById("invite-token-text").textContent;
-      navigator.clipboard.writeText(token);
-      showToast("Invite token copied to clipboard!", "success");
+    function copyToken() {
+      const t = document.getElementById("invite-token-val").textContent;
+      navigator.clipboard.writeText(t);
+      showToast("Copied to clipboard.");
     }
 
     async function scheduleSession() {
@@ -1568,208 +1093,109 @@
       };
       if (body.start_time.length === 5) body.start_time += ":00";
       if (body.end_time.length === 5) body.end_time += ":00";
-
-      const { status, data } = await apiCall("/sessions", "POST", body);
-      if (status === 200) {
-        showToast(data.message, "success");
-      } else {
-        showToast(data.detail || "Failed to schedule session", "error");
-      }
+      const { data } = await apiCall("/sessions", "POST", body);
+      showToast(data.message || data.detail);
     }
 
     async function loadSessionAttendance() {
-      const sId = document.getElementById("tr-att-sid").value.trim();
-      if (!sId) return showToast("Enter session ID", "error");
-      const { status, data } = await apiCall(`/sessions/${sId}/attendance`, "GET");
+      const sid = document.getElementById("tr-roster-sid").value;
+      if (!sid) return showToast("Enter session ID.");
+      const { status, data } = await apiCall(`/sessions/${sid}/attendance`, "GET");
       if (status === 200 && data.records) {
-        const tbody = document.getElementById("tr-att-tbody");
-        tbody.innerHTML = "";
-        if (data.records.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No attendance recorded yet for session #${sId}</td></tr>`;
-        } else {
-          data.records.forEach(r => {
-            tbody.innerHTML += `
-              <tr>
-                <td>#${r.student_id}</td>
-                <td><strong>${r.student_name}</strong></td>
-                <td style="color:#94a3b8;">${r.student_email}</td>
-                <td><span class="badge badge-${r.status}">${r.status}</span></td>
-                <td>${new Date(r.marked_at).toLocaleString()}</td>
-              </tr>
-            `;
-          });
-        }
-        document.getElementById("tr-att-table-wrap").classList.remove("hidden");
-        showToast(`Loaded ${data.records.length} records for session #${sId}`, "success");
+        const tb = document.getElementById("tr-roster-tbody");
+        tb.innerHTML = "";
+        data.records.forEach(r => {
+          tb.innerHTML += `<tr><td>#${r.student_id}</td><td>${r.student_name}</td><td style="color:var(--text-muted);">${r.student_email}</td><td><span class="badge badge-${r.status}">${r.status}</span></td><td>${new Date(r.marked_at).toLocaleTimeString()}</td></tr>`;
+        });
+        document.getElementById("tr-roster-table-wrap").classList.remove("hidden");
+        showToast(`Loaded ${data.records.length} records.`);
       } else {
-        showToast(data.detail || "Could not fetch attendance", "error");
+        showToast(data.detail || "Error loading records.");
       }
     }
 
-    // Student Actions
-    async function joinBatchStudent() {
+    async function joinBatch() {
       const token = document.getElementById("st-join-token").value.trim();
-      if (!token) return showToast("Please paste an invite token", "error");
-      const { status, data } = await apiCall("/batches/join", "POST", { token });
-      if (status === 200) {
-        showToast(data.message, "success");
-        document.getElementById("st-join-token").value = "";
-      } else {
-        showToast(data.detail || "Failed to join batch", "error");
-      }
+      if (!token) return showToast("Paste an invite token.");
+      const { data } = await apiCall("/batches/join", "POST", { token });
+      showToast(data.message || data.detail);
     }
 
-    async function markAttendanceStudent() {
-      const body = {
-        session_id: Number(document.getElementById("st-att-sid").value),
-        status: document.getElementById("st-att-status").value
-      };
-      if (!body.session_id) return showToast("Please enter an active session ID", "error");
-
-      const { status, data } = await apiCall("/attendance/mark", "POST", body);
-      if (status === 200) {
-        showToast("Attendance marked successfully!", "success");
-      } else {
-        showToast(data.detail || "Could not mark attendance", "error");
-      }
-    }
-
-    // Institution Actions
-    async function createBatchInstitution() {
-      const name = document.getElementById("inst-batch-name").value.trim();
-      if (!name) return showToast("Enter cohort name", "error");
-      const { status, data } = await apiCall("/batches", "POST", { name });
-      if (status === 200) {
-        showToast(data.message, "success");
-        document.getElementById("inst-batch-name").value = "";
-      } else {
-        showToast(data.detail || "Failed to create cohort", "error");
-      }
+    async function markAttendance() {
+      const sid = Number(document.getElementById("st-mark-sid").value);
+      const status = document.getElementById("st-mark-status").value;
+      if (!sid) return showToast("Enter session ID.");
+      const { data } = await apiCall("/attendance/mark", "POST", { session_id: sid, status });
+      showToast(data.message || data.detail);
     }
 
     async function loadBatchSummary() {
-      const bId = document.getElementById("inst-sum-bid").value.trim();
-      if (!bId) return showToast("Enter batch ID", "error");
-      const { status, data } = await apiCall(`/batches/${bId}/summary`, "GET");
+      const bid = document.getElementById("inst-bid-input").value;
+      if (!bid) return showToast("Enter batch ID.");
+      const { status, data } = await apiCall(`/batches/${bid}/summary`, "GET");
       if (status === 200) {
-        document.getElementById("inst-sum-stats").classList.remove("hidden");
-        document.getElementById("inst-sum-title").textContent = `Cohort: ${data.batch_name} (#${data.batch_id})`;
-        document.getElementById("kpi-b-sessions").textContent = data.total_sessions;
-        document.getElementById("kpi-b-present").textContent = data.present;
-        document.getElementById("kpi-b-late").textContent = data.late;
-        document.getElementById("kpi-b-absent").textContent = data.absent;
-        showToast("Summary refreshed", "success");
+        document.getElementById("inst-summary-stats").classList.remove("hidden");
+        document.getElementById("stat-b-sessions").textContent = data.total_sessions;
+        document.getElementById("stat-b-present").textContent = data.present;
+        document.getElementById("stat-b-late").textContent = data.late;
+        document.getElementById("stat-b-absent").textContent = data.absent;
+        showToast("Summary loaded.");
       } else {
-        showToast(data.detail || "Could not fetch batch summary", "error");
+        showToast(data.detail || "Error loading summary.");
       }
     }
 
-    // Programme Manager Actions
-    async function loadProgrammeGlobal() {
+    async function loadProgrammeOverview() {
       const { status, data } = await apiCall("/programme/summary", "GET");
       if (status === 200) {
-        document.getElementById("pm-g-inst").textContent = data.total_institutions;
-        document.getElementById("pm-g-batch").textContent = data.total_batches;
-        document.getElementById("pm-g-students").textContent = data.total_students;
-        document.getElementById("pm-g-sessions").textContent = data.total_sessions;
-        document.getElementById("pm-g-present").textContent = data.present;
-        showToast("Global analytics refreshed", "info");
+        document.getElementById("pm-stat-inst").textContent = data.total_institutions;
+        document.getElementById("pm-stat-batches").textContent = data.total_batches;
+        document.getElementById("pm-stat-students").textContent = data.total_students;
+        document.getElementById("pm-stat-sessions").textContent = data.total_sessions;
       }
     }
 
-    async function loadInstitutionSummaryPM() {
-      const iId = document.getElementById("pm-inst-id-input").value.trim();
-      if (!iId) return showToast("Enter institution ID", "error");
-      const { status, data } = await apiCall(`/institutions/${iId}/summary`, "GET");
-      if (status === 200) {
-        document.getElementById("pm-inst-stats").classList.remove("hidden");
-        document.getElementById("pm-inst-title").textContent = `${data.institution_name} (#${data.institution_id})`;
-        document.getElementById("kpi-i-batches").textContent = data.total_batches;
-        document.getElementById("kpi-i-sessions").textContent = data.total_sessions;
-        document.getElementById("kpi-i-students").textContent = data.total_students;
-        showToast("Institution report loaded", "success");
-      } else {
-        showToast(data.detail || "Could not load report", "error");
-      }
-    }
-
-    async function createInstitutionPM() {
-      const name = document.getElementById("pm-new-inst-name").value.trim();
-      if (!name) return showToast("Enter institution name", "error");
-      const { status, data } = await apiCall("/institutions", "POST", { name });
-      if (status === 200) {
-        showToast("Institution registered successfully!", "success");
-        document.getElementById("pm-new-inst-name").value = "";
-      } else {
-        showToast(data.detail || "Failed to create institution", "error");
-      }
-    }
-
-    // Monitoring Officer Actions
     async function authorizeMonitoringToken() {
-      const key = document.getElementById("mon-secret-key").value.trim();
-      if (!key) return showToast("Please enter the monitoring secret key", "error");
+      const key = document.getElementById("mon-key-input").value.trim();
       const { status, data } = await apiCall("/auth/monitoring-token", "POST", { key });
       if (status === 200 && data.access_token) {
-        monitoringToken = data.access_token;
-        sessionStorage.setItem("sb_mon_token", monitoringToken);
-        showToast("Scoped telemetry token authorized!", "success");
+        monToken = data.access_token;
+        sessionStorage.setItem("sb_mon_token", monToken);
+        showToast("Monitoring token authorized.");
+        loadMonitoringFeed();
       } else {
-        showToast(data.detail || "Authorization failed", "error");
+        showToast(data.detail || "Authorization failed.");
       }
     }
 
     async function loadMonitoringFeed() {
-      if (!monitoringToken) {
-        showToast("Authorize secret key first to acquire scoped monitoring token", "warning");
-        return;
-      }
       const { status, data } = await apiCall("/monitoring/attendance", "GET", null, true);
       if (status === 200 && data.records) {
-        const tbody = document.getElementById("mon-feed-tbody");
-        tbody.innerHTML = "";
-        if (data.records.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No recent attendance records.</td></tr>`;
-        } else {
-          data.records.forEach(r => {
-            tbody.innerHTML += `
-              <tr>
-                <td>#${r.attendance_id}</td>
-                <td><strong>${r.session_title}</strong> <span style="color:#64748b;">(#${r.session_id})</span></td>
-                <td>${r.student_name}</td>
-                <td><span class="badge badge-${r.status}">${r.status}</span></td>
-                <td style="color:#94a3b8;">${new Date(r.marked_at).toLocaleString()}</td>
-              </tr>
-            `;
-          });
-        }
-        showToast(`Feed refreshed (${data.count} events)`, "success");
-      } else {
-        showToast(data.detail || "Could not fetch telemetry feed", "error");
+        const tb = document.getElementById("mon-tbody");
+        tb.innerHTML = "";
+        data.records.forEach(r => {
+          tb.innerHTML += `<tr><td>#${r.attendance_id}</td><td>${r.session_title}</td><td>${r.student_name}</td><td><span class="badge badge-${r.status}">${r.status}</span></td><td>${new Date(r.marked_at).toLocaleTimeString()}</td></tr>`;
+        });
+        showToast(`Loaded ${data.records.length} telemetry records.`);
       }
     }
 
-    // Real-time IST clock update
-    async function syncClock() {
+    async function updateClock() {
       try {
         const res = await fetch("/time");
         if (res.ok) {
           const d = await res.json();
-          document.getElementById("ist-clock").textContent = `${d.ist_time} IST`;
+          document.getElementById("ist-time-text").textContent = `${d.ist_time} IST`;
         }
       } catch (e) {
         const now = new Date();
-        const istOffset = 5.5 * 60 * 60 * 1000;
-        const istDate = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + istOffset);
-        document.getElementById("ist-clock").textContent = `${istDate.toLocaleTimeString()} IST`;
+        document.getElementById("ist-time-text").textContent = `${now.toLocaleTimeString()} IST`;
       }
     }
 
-    setInterval(syncClock, 3000);
-    syncClock();
-
-    // Init session on load
-    initSession();
+    setInterval(updateClock, 3000);
+    updateClock();
+    initApp();
   </script>
 </body>
 </html>
